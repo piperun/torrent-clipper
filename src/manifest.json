@@ -10,7 +10,6 @@
     "64": "icon/default-64.png"
   },
   "options_ui": {
-    "browser_style": true,
     "page": "view/options.html"
   },
   "browser_action": {
@@ -43,12 +42,12 @@
       "util.js",
       "index.js"
     ]
-  },
-  "protocol_handlers": [
-    {
+  }
+  /*"protocol_handlers": [
+  /  {
       "protocol": "magnet",
       "name": "Torrent Clipper Magnet Handler",
       "uriTemplate": "https://torrent-clipper.invalid/%s"
     }
-  ]
+  ]*/
 }
