@@ -47,7 +47,7 @@ class ruTorrentApi extends BaseClient {
                 if (json.result && json.result === 'Success')
                     resolve();
                 else
-                    throw new Error(browser.i18n.getMessage('torrentAddError', json.result || ''));
+                    throw new Error(chrome.i18n.getMessage('torrentAddError', json.result || ''));
             })
             .catch((error) => reject(error));
         });
@@ -79,7 +79,7 @@ class ruTorrentApi extends BaseClient {
                 if (json.result && json.result === 'Success')
                     resolve();
                 else
-                    throw new Error(browser.i18n.getMessage('torrentAddError', json.result || ''));
+                    throw new Error(chrome.i18n.getMessage('torrentAddError', json.result || ''));
             })
             .catch((error) => reject(error));
         });

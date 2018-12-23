@@ -3,21 +3,9 @@
     "message": "Lisäosan asetukset",
     "description": "Addon configuration"
   },
-  "contextMenuOption": {
-    "message": "Kontekstivalikko",
-    "description": "Context menu"
-  },
-  "contextMenuDefaultOption": {
-    "message": "Oletus",
-    "description": "Context menu default"
-  },
-  "contextMenuSimpleOption": {
-    "message": "Yksinkertainen",
-    "description": "Context menu simple"
-  },
-  "contextMenuHiddenOption": {
-    "message": "Piilotettu",
-    "description": "Context menu hidden"
+  "contextmenuOption": {
+    "message": "Näytä kontekstivalikko",
+    "description": "Show context menu"
   },
   "catchUrlsOption": {
     "message": "Kaappaa torrent osoitteet",
@@ -41,10 +29,6 @@
   },
   "addTorrentLabelAction": {
     "message": "Lisää torrent tunnisteella",
-    "description": "Context menu action"
-  },
-  "addTorrentPathAction": {
-    "message": "Lisää torrent polulla",
     "description": "Context menu action"
   },
   "saveAction": {
@@ -86,10 +70,6 @@
   "passwordOption": {
     "message": "Salasana",
     "description": "Password option"
-  },
-  "serverDirectoriesOption": {
-    "message": "Hakemistot",
-    "description": "Server directories option"
   },
   "torrentAddedNotification": {
     "message": "Torrentti lisätty",

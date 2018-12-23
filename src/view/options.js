@@ -3,22 +3,19 @@ var options;
 const serverSelect = document.querySelector('#server-list');
 
 const persistOptions = () => {
-    options.globals.contextMenu = ~~document.querySelector('[name="contextmenu"]:checked').value;
+    options.globals.showcontextmenu = document.querySelector('#contextmenu').checked;
     options.globals.catchUrls = document.querySelector('#catchurls').checked;
     options.globals.addPaused = document.querySelector('#addpaused').checked;
 
     const labels = document.querySelector('#labels').value.split(/\n/g) || [];
     options.globals.labels = labels.map((label) => label.trim()).filter((label) => label.length);
 
-    const directories = document.querySelector('#directories').value.split(/\n/g) || [];
-
     options.servers[~~serverSelect.value] = {
         name: document.querySelector('#name').value,
         application: document.querySelector('#application').value,
         hostname: document.querySelector('#hostname').value.replace(/\s+/, '').replace(/\/?$/, '/'),
         username: document.querySelector('#username').value,
-        password: document.querySelector('#password').value,
-        directories: directories.map((directory) => directory.trim()).filter((directory) => directory.length)
+        password: document.querySelector('#password').value
     };
 
     saveOptions(options);
@@ -37,10 +34,9 @@ const restoreOptions = () => {
     });
 
     document.querySelector('#labels').placeholder = 'Label\nAnother label'.replace(/\\n/g, '\n');
-    document.querySelector('#directories').placeholder = '/home/user/downloads\n/data/incomplete'.replace(/\\n/g, '\n');
 
     document.querySelectorAll('[data-i18n]').forEach((element) => {
-        element.textContent = browser.i18n.getMessage(element.getAttribute('data-i18n'));
+        element.textContent = chrome.i18n.getMessage(element.getAttribute('data-i18n'));
     });
 
     clientList.forEach((client) => {
@@ -53,7 +49,7 @@ const restoreOptions = () => {
     loadOptions().then((newOptions) => {
         options = newOptions;
 
-        document.querySelector('[name="contextmenu"][value="' + options.globals.contextMenu + '"]').checked = true;
+        document.querySelector('#contextmenu').checked = options.globals.showcontextmenu;
         document.querySelector('#catchurls').checked = options.globals.catchUrls;
         document.querySelector('#addpaused').checked = options.globals.addPaused;
 
@@ -78,7 +74,7 @@ const restoreServerList = () => {
 
     let element = document.createElement('option');
     element.setAttribute('value', 'add');
-    element.textContent = browser.i18n.getMessage('addServerAction');
+    element.textContent = chrome.i18n.getMessage('addServerAction');
     serverSelect.appendChild(element);
 
     serverSelect.value = selectedServer;
@@ -95,7 +91,6 @@ const restoreServer = (id) => {
     document.querySelector('#hostname').value = server.hostname;
     document.querySelector('#username').value = server.username;
     document.querySelector('#password').value = server.password;
-    document.querySelector('#directories').value = server.directories.join('\n');
 
     document.querySelector('#application').dispatchEvent(new Event('change'));
 
@@ -111,8 +106,7 @@ const addServer = () => {
         application: clientList[0].id,
         hostname: '',
         username: '',
-        password: '',
-        directories: []
+        password: ''
     });
 
     restoreServerList();
@@ -170,9 +164,6 @@ document.querySelector('#application').addEventListener('change', (e) => {
 
         if (currentAddress === '' || clientList.find((client) => client.addressPlaceholder === currentAddress))
             document.querySelector('#hostname').value = client.addressPlaceholder;
-
-        document.querySelector('[data-panel="directories"]').style.display =
-            client.torrentOptions && client.torrentOptions.includes('path') ? 'flex' : 'none';
 
         if (client.id === 'deluge')
             document.querySelector('#username').setAttribute('disabled', 'true');

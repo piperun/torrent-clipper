@@ -3,21 +3,9 @@
     "message": "Addon configuration",
     "description": "Addon configuration"
   },
-  "contextMenuOption": {
-    "message": "Context menu",
-    "description": "Context menu"
-  },
-  "contextMenuDefaultOption": {
-    "message": "Default",
-    "description": "Context menu default"
-  },
-  "contextMenuSimpleOption": {
-    "message": "Simple",
-    "description": "Context menu simple"
-  },
-  "contextMenuHiddenOption": {
-    "message": "Hidden",
-    "description": "Context menu hidden"
+  "contextmenuOption": {
+    "message": "Show context menu",
+    "description": "Show context menu"
   },
   "catchUrlsOption": {
     "message": "Catch torrent URLs",
@@ -41,10 +29,6 @@
   },
   "addTorrentLabelAction": {
     "message": "Add torrent with label",
-    "description": "Context menu action"
-  },
-  "addTorrentPathAction": {
-    "message": "Add torrent with path",
     "description": "Context menu action"
   },
   "saveAction": {
@@ -86,10 +70,6 @@
   "passwordOption": {
     "message": "Password",
     "description": "Password option"
-  },
-  "serverDirectoriesOption": {
-    "message": "Directories",
-    "description": "Server directories option"
   },
   "torrentAddedNotification": {
     "message": "Torrent added",

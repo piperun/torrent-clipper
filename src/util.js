@@ -3,7 +3,7 @@ const clientList = [
         id: 'biglybt',
         name: 'BiglyBT',
         addressPlaceholder: 'http://127.0.0.1:9091/',
-        torrentOptions: ['paused', 'path']
+        torrentOptions: ['paused']
     },
     {
         id: 'cloudtorrent',
@@ -14,19 +14,19 @@ const clientList = [
         id: 'deluge',
         name: 'Deluge Web UI',
         addressPlaceholder: 'http://127.0.0.1:8112/',
-        torrentOptions: ['paused', 'path']
+        torrentOptions: ['paused']
     },
     {
         id: 'flood',
         name: 'Flood',
         addressPlaceholder: 'http://127.0.0.1:3000/',
-        torrentOptions: ['paused', 'label', 'path']
+        torrentOptions: ['paused', 'label']
     },
     {
         id: 'rutorrent',
         name: 'ruTorrent',
         addressPlaceholder: 'http://127.0.0.1:80/',
-        torrentOptions: ['paused', 'label', 'path']
+        torrentOptions: ['paused', 'label']
     },
     {
         id: 'tixati',
@@ -38,7 +38,7 @@ const clientList = [
         id: 'transmission',
         name: 'Transmission',
         addressPlaceholder: 'http://127.0.0.1:9091/',
-        torrentOptions: ['paused', 'path']
+        torrentOptions: ['paused']
     },
     {
         id: 'utorrent',
@@ -49,7 +49,7 @@ const clientList = [
         id: 'qbittorrent',
         name: 'qBittorrent',
         addressPlaceholder: 'http://127.0.0.1:8080/',
-        torrentOptions: ['paused', 'label', 'path']
+        torrentOptions: ['paused', 'label']
     },
     {
         id: 'qbittorrent_404',
@@ -93,7 +93,7 @@ const loadOptions = () => {
         globals: {
             currentServer: 0,
             addPaused: false,
-            contextMenu: 1,
+            showcontextmenu: true,
             catchUrls: true,
             labels: []
         },
@@ -103,14 +103,13 @@ const loadOptions = () => {
                 application: clientList[0].id,
                 hostname: '',
                 username: '',
-                password: '',
-                directories: []
+                password: ''
             }
         ]
     };
 
     return new Promise((resolve, reject) => {
-        browser.storage.local.get(defaults).then((options) => {
+        chrome.storage.sync.get(['servers'], (options) => {
             mergeObjects(defaults, options);
             resolve(defaults);
         });
@@ -118,7 +117,7 @@ const loadOptions = () => {
 }
 
 const saveOptions = (options) => {
-    return browser.storage.local.set(options);
+    return chrome.storage.sync.set(options);
 }
 
 const isMagnetUrl = (url) => {

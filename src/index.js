@@ -1,11 +1,11 @@
 var options;
 
-browser.storage.onChanged.addListener((changes) => {
+chrome.storage.onChanged.addListener((changes) => {
     Object.keys(changes).forEach((key) => options[key] = changes[key].newValue);
 
     removeContextMenu();
 
-    if (options.globals.contextMenu && options.servers[options.globals.currentServer].hostname !== '')
+    if (options.globals.showcontextmenu && options.servers[options.globals.currentServer].hostname !== '')
         createContextMenu();
 
     if (options.servers.length > 1)
@@ -17,7 +17,7 @@ browser.storage.onChanged.addListener((changes) => {
 loadOptions().then((newOptions) => {
     options = newOptions;
 
-    if (options.globals.contextMenu && options.servers[options.globals.currentServer].hostname !== '')
+    if (options.globals.showcontextmenu && options.servers[options.globals.currentServer].hostname !== '')
         createContextMenu();
 
     if (options.servers.length > 1)
@@ -46,14 +46,14 @@ const addTorrent = (url, referer = null, torrentOptions = {}) => {
             .then(() => connection.addTorrentUrl(url, torrentOptions)
                 .then(() => {
                     const torrentName = getMagnetUrlName(url);
-                    notification(browser.i18n.getMessage('torrentAddedNotification') + (torrentName ? ' ' + torrentName : ''));
+                    notification(chrome.i18n.getMessage('torrentAddedNotification') + (torrentName ? ' ' + torrentName : ''));
                     connection.logOut();
                 })
             ).catch((error) => {
                 connection.removeEventListeners();
 
                 if (networkErrors.includes(error.message))
-                    notification(browser.i18n.getMessage('torrentAddError', 'Network error'));
+                    notification(chrome.i18n.getMessage('torrentAddError', 'Network error'));
                 else
                     notification(error.message);
             });
@@ -62,7 +62,7 @@ const addTorrent = (url, referer = null, torrentOptions = {}) => {
             .then(({torrent, torrentName}) => connection.logIn()
                 .then(() => connection.addTorrent(torrent, torrentOptions)
                     .then(() => {
-                        notification(browser.i18n.getMessage('torrentAddedNotification') + (torrentName ? ' ' + torrentName : ''));
+                        notification(chrome.i18n.getMessage('torrentAddedNotification') + (torrentName ? ' ' + torrentName : ''));
                         connection.logOut();
                     })
                 )
@@ -70,7 +70,7 @@ const addTorrent = (url, referer = null, torrentOptions = {}) => {
                 connection.removeEventListeners();
 
                 if (networkErrors.includes(error.message))
-                    notification(browser.i18n.getMessage('torrentAddError', 'Network error'));
+                    notification(chrome.i18n.getMessage('torrentAddError', 'Network error'));
                 else
                     notification(error.message);
             });
@@ -79,7 +79,7 @@ const addTorrent = (url, referer = null, torrentOptions = {}) => {
 
 const fetchTorrent = (url, referer) => {
     return new Promise((resolve, reject) => {
-        createBrowserRequest(url, referer).then((removeEventListeners) => {
+        createchromeRequest(url, referer).then((removeEventListeners) => {
             fetch(url, {
                 headers: new Headers({
                     'Accept': 'application/x-bittorrent,*/*;q=0.9'
@@ -87,11 +87,11 @@ const fetchTorrent = (url, referer) => {
                 credentials: 'include'
             }).then((response) => {
                 if (!response.ok)
-                    throw new Error(browser.i18n.getMessage('torrentFetchError', response.status.toString() + ': ' + response.statusText));
+                    throw new Error(chrome.i18n.getMessage('torrentFetchError', response.status.toString() + ': ' + response.statusText));
 
                 const contentType = response.headers.get('content-type');
                 if (!contentType.match(/(application\/x-bittorrent|application\/octet-stream)/gi))
-                    throw new Error(browser.i18n.getMessage('torrentParseError', 'Unkown type: ' + contentType));
+                    throw new Error(chrome.i18n.getMessage('torrentParseError', 'Unkown type: ' + contentType));
 
                 return response.blob();
             }).then((buffer) => {
@@ -105,7 +105,7 @@ const fetchTorrent = (url, referer) => {
     });
 }
 
-const createBrowserRequest = (url, referer) => {
+const createchromeRequest = (url, referer) => {
     return new Promise((resolve, reject) => {
         const listener = (details) => {
             let requestHeaders = details.requestHeaders;
@@ -127,24 +127,24 @@ const createBrowserRequest = (url, referer) => {
             };
         }
 
-        browser.webRequest.onBeforeSendHeaders.addListener(
+        chrome.webRequest.onBeforeSendHeaders.addListener(
             listener,
             {urls: [url]},
             ['blocking', 'requestHeaders']
         );
 
-        resolve(() => browser.webRequest.onBeforeSendHeaders.removeListener(listener));
+        resolve(() => chrome.webRequest.onBeforeSendHeaders.removeListener(listener));
     });
 }
 
 const createServerSelectionContextMenu = () => {
     let context = ['browser_action'];
 
-    if (options.globals.contextMenu)
+    if (options.globals.showcontextmenu)
         context.push('page');
 
     options.servers.forEach((server, id) => {
-        browser.menus.create({
+        chrome.contextMenus.create({
             id: 'current-server-' + id.toString(),
             type: 'radio',
             checked: id === options.globals.currentServer,
@@ -155,87 +155,65 @@ const createServerSelectionContextMenu = () => {
 }
 
 const createDefaultMenu = () => {
-    browser.menus.create({
+    chrome.contextMenus.create({
         id: 'catch-urls',
         type: 'checkbox',
         checked: options.globals.catchUrls,
-        title: browser.i18n.getMessage('catchUrlsOption'),
+        title: chrome.i18n.getMessage('catchUrlsOption'),
         contexts: ['browser_action']
     });
-    browser.menus.create({
+    chrome.contextMenus.create({
         id: 'add-paused',
         type: 'checkbox',
         checked: options.globals.addPaused,
-        title: browser.i18n.getMessage('addPausedOption'),
+        title: chrome.i18n.getMessage('addPausedOption'),
         contexts: ['browser_action']
     });
 }
 
 const createContextMenu = () => {
-    const serverOptions = options.servers[options.globals.currentServer];
-
-    browser.menus.create({
+    chrome.contextMenus.create({
       id: 'add-torrent',
-      title: browser.i18n.getMessage('addTorrentAction'),
+      title: chrome.i18n.getMessage('addTorrentAction'),
       contexts: ['link']
     });
 
-    const client = clientList.find((client) => client.id === serverOptions.application);
+    const client = clientList.find((client) => client.id === options.servers[options.globals.currentServer].application);
 
-    if (options.globals.contextMenu === 1 && client.torrentOptions) {
-        if (client.torrentOptions.includes('paused')) {
-            browser.menus.create({
-              id: 'add-torrent-paused',
-              title: browser.i18n.getMessage('addTorrentPausedAction'),
-              contexts: ['link']
-            });
-        }
+    if (client.torrentOptions && client.torrentOptions.includes('paused')) {
+        chrome.contextMenus.create({
+          id: 'add-torrent-paused',
+          title: chrome.i18n.getMessage('addTorrentPausedAction'),
+          contexts: ['link']
+        });
+    }
 
-        if (client.torrentOptions.includes('label') && options.globals.labels.length) {
-            browser.menus.create({
-                id: 'add-torrent-label',
-                title: browser.i18n.getMessage('addTorrentLabelAction'),
+    if (client.torrentOptions && client.torrentOptions.includes('label') && options.globals.labels.length) {
+        chrome.contextMenus.create({
+            id: 'add-torrent-label',
+            title: chrome.i18n.getMessage('addTorrentLabelAction'),
+            contexts: ['link']
+        });
+
+        options.globals.labels.forEach((label, i) => {
+            chrome.contextMenus.create({
+                id: 'add-torrent-label-' + i,
+                parentId: 'add-torrent-label',
+                title: label,
                 contexts: ['link']
             });
-
-            options.globals.labels.forEach((label, i) => {
-                browser.menus.create({
-                    id: 'add-torrent-label-' + i,
-                    parentId: 'add-torrent-label',
-                    title: label,
-                    contexts: ['link']
-                });
-            });
-        }
-
-        if (client.torrentOptions.includes('path') && serverOptions.directories.length) {
-            browser.menus.create({
-                id: 'add-torrent-path',
-                title: browser.i18n.getMessage('addTorrentPathAction'),
-                contexts: ['link']
-            });
-
-            serverOptions.directories.forEach((directory, i) => {
-                browser.menus.create({
-                    id: 'add-torrent-path-' + i,
-                    parentId: 'add-torrent-path',
-                    title: directory,
-                    contexts: ['link']
-                });
-            });
-        }
+        });
     }
 }
 
 const removeContextMenu = () => {
-    browser.menus.removeAll();
+    chrome.contextMenus.removeAll();
 }
 
 const registerHandler = () => {
-    browser.menus.onClicked.addListener((info, tab) => {
+    chrome.contextMenus.onClicked.addListener((info, tab) => {
         const currentServer = info.menuItemId.match(/^current\-server\-(\d+)$/);
         const labelId = info.menuItemId.match(/^add\-torrent\-label\-(\d+)$/);
-        const pathId = info.menuItemId.match(/^add\-torrent\-path\-(\d+)$/);
 
         if (info.menuItemId === 'catch-urls')
             toggleURLCatching();
@@ -254,26 +232,21 @@ const registerHandler = () => {
                 paused: options.globals.addPaused,
                 label: options.globals.labels[~~labelId[1]]
             });
-        else if (pathId)
-            addTorrent(info.linkUrl, info.pageUrl, {
-                paused: options.globals.addPaused,
-                path: options.servers[options.globals.currentServer].directories[~~pathId[1]]
-            });
         else if (currentServer)
             setCurrentServer(parseInt(currentServer[1]));
     });
 
-    browser.browserAction.onClicked.addListener(() => {
+    chrome.browserAction.onClicked.addListener(() => {
         if (options.servers[options.globals.currentServer].hostname !== '') {
-            browser.tabs.create({
+            chrome.tabs.create({
                 url: options.servers[options.globals.currentServer].hostname
             });
         } else {
-            browser.runtime.openOptionsPage();
+            chrome.runtime.openOptionsPage();
         }
     });
 
-    browser.webRequest.onBeforeRequest.addListener(
+    chrome.webRequest.onBeforeRequest.addListener(
         (details) => {
             let parser = document.createElement('a');
             parser.href = details.url;
@@ -287,7 +260,7 @@ const registerHandler = () => {
         ['blocking']
     );
 
-    browser.webRequest.onBeforeRequest.addListener(
+    chrome.webRequest.onBeforeRequest.addListener(
         (details) => {
             if (options.globals.catchUrls && details.type === 'main_frame' && isTorrentUrl(details.url)) {
                 addTorrent(details.url, details.originUrl, {
@@ -304,12 +277,12 @@ const registerHandler = () => {
 }
 
 const notification = (message) => {
-    browser.notifications.create({
+    chrome.notifications.create({
         type: 'basic',
-        iconUrl: browser.extension.getURL('icon/default-48.png'),
+        iconUrl: chrome.extension.getURL('icon/default-48.png'),
         title: 'Torrent Control',
         message: message
-    }).then((id) => setTimeout(() => browser.notifications.clear(id), 3000));
+    }, (id) => setTimeout(() => chrome.notifications.clear(id), 3000));
 }
 
 const setCurrentServer = (id) => {
