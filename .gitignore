@@ -1,2 +1,5 @@
 node_modules/
 web-ext-artifacts/
+*.zip
+*.crx
+*.pem

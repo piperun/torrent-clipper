@@ -44,7 +44,7 @@
     ]
   }
   /*"protocol_handlers": [
-  /  {
+    {
       "protocol": "magnet",
       "name": "Torrent Clipper Magnet Handler",
       "uriTemplate": "https://torrent-clipper.invalid/%s"
