@@ -1,6 +1,6 @@
 {
   "manifest_version": 2,
-  "name": "Torrent Control",
+  "name": "Torrent Clipper",
   "version": "0.2.6",
   "description": "Add torrent and magnet links to your Bittorrent client's web interface.",
   "default_locale": "en",
@@ -47,8 +47,8 @@
   "protocol_handlers": [
     {
       "protocol": "magnet",
-      "name": "Torrent Control Magnet Handler",
-      "uriTemplate": "https://torrent-control.invalid/%s"
+      "name": "Torrent Clipper Magnet Handler",
+      "uriTemplate": "https://torrent-clipper.invalid/%s"
     }
   ]
 }
