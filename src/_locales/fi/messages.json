@@ -1,0 +1,118 @@
+{
+  "addonConfigurationTitle": {
+    "message": "Lisäosan asetukset",
+    "description": "Addon configuration"
+  },
+  "contextMenuOption": {
+    "message": "Kontekstivalikko",
+    "description": "Context menu"
+  },
+  "contextMenuDefaultOption": {
+    "message": "Oletus",
+    "description": "Context menu default"
+  },
+  "contextMenuSimpleOption": {
+    "message": "Yksinkertainen",
+    "description": "Context menu simple"
+  },
+  "contextMenuHiddenOption": {
+    "message": "Piilotettu",
+    "description": "Context menu hidden"
+  },
+  "catchUrlsOption": {
+    "message": "Kaappaa torrent osoitteet",
+    "description": "Catch torrent URLs"
+  },
+  "addPausedOption": {
+    "message": "Lisää torrentit keskeytettynä",
+    "description": "Add as paused by default"
+  },
+  "torrentLabelsOption": {
+    "message": "Tunnisteet",
+    "description": "Label list option"
+  },
+  "addTorrentAction": {
+    "message": "Lisää torrent",
+    "description": "Context menu action"
+  },
+  "addTorrentPausedAction": {
+    "message": "Lisää torrent (Keskeytettynä)",
+    "description": "Context menu action"
+  },
+  "addTorrentLabelAction": {
+    "message": "Lisää torrent tunnisteella",
+    "description": "Context menu action"
+  },
+  "addTorrentPathAction": {
+    "message": "Lisää torrent polulla",
+    "description": "Context menu action"
+  },
+  "saveAction": {
+    "message": "Tallenna",
+    "description": "Save action"
+  },
+  "removeAction": {
+    "message": "Poista palvelin",
+    "description": "Remove action"
+  },
+  "addServerAction": {
+    "message": "Lisää uusi palvelin",
+    "description": "Add server action"
+  },
+  "serverConfigurationTitle": {
+    "message": "Palvelimen asetukset",
+    "description": "Server configuration title"
+  },
+  "bittorrentClientOption": {
+    "message": "Bittorrent-sovellus",
+    "description": "Bittorrent client option"
+  },
+  "serverSelect": {
+    "message": "Nykyinen palvelin",
+    "description": "Server select"
+  },
+  "serverNameOption": {
+    "message": "Palvelimen nimi",
+    "description": "Server name option"
+  },
+  "serverAddressOption": {
+    "message": "Palvelimen osoite",
+    "description": "Server address option"
+  },
+  "usernameOption": {
+    "message": "Käyttäjätunnus",
+    "description": "Username option"
+  },
+  "passwordOption": {
+    "message": "Salasana",
+    "description": "Password option"
+  },
+  "serverDirectoriesOption": {
+    "message": "Hakemistot",
+    "description": "Server directories option"
+  },
+  "torrentAddedNotification": {
+    "message": "Torrentti lisätty",
+    "description": "Torrent added notification."
+  },
+  "loginError": {
+    "message": "Sisäänkirjautuminen epäonnistui",
+    "description": "Login error."
+  },
+  "apiError": {
+    "message": "Tuntematon vastaus. ($1)",
+    "description": "Unknown response."
+  },
+  "torrentAddError": {
+    "message": "Torrentin lisäys epäonnistui. $1",
+    "description": "Add error."
+  },
+  "torrentFetchError": {
+    "message": "Torrentin hakeminen epäonnistui. ($1)",
+    "description": "Fetch error."
+  },
+  "torrentParseError": {
+    "message": "Torrentin lukeminen epäonnistui. ($1)",
+    "description": "Parse error."
+  }
+}

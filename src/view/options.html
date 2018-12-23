@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+</head>
+<body>
+
+<section id="options-section" class="panel">
+
+    <div class="panel-section panel-section-header">
+        <span class="text-section-header" data-i18n="addonConfigurationTitle"></span>
+    </div>
+
+    <div class="panel-section panel-section-formElements">
+        <div class="panel-formElements-item browser-style">
+            <label data-i18n="contextMenuOption"></label>
+
+            <input type="radio" name="contextmenu" value="1" id="contextmenuDefault">
+            <label data-i18n="contextMenuDefaultOption" for="contextmenuDefault"></label>
+
+            <input type="radio" name="contextmenu" value="2" id="contextmenuSimple">
+            <label data-i18n="contextMenuSimpleOption" for="contextmenuSimple"></label>
+
+            <input type="radio" name="contextmenu" value="0" id="contextmenuHidden">
+            <label data-i18n="contextMenuHiddenOption" for="contextmenuHidden"></label>
+        </div>
+
+        <div class="panel-formElements-item browser-style">
+            <input type="checkbox" id="catchurls" />
+            <label for="catchurls" data-i18n="catchUrlsOption"></label>
+        </div>
+
+        <div class="panel-formElements-item browser-style">
+            <input type="checkbox" id="addpaused" />
+            <label for="addpaused" data-i18n="addPausedOption"></label>
+        </div>
+
+        <div class="panel-formElements-item browser-style" style="align-items:flex-start;flex-direction:column">
+            <label for="labels" data-i18n="torrentLabelsOption"></label>
+            <textarea id="labels" class="browser-style" style="width:250px"></textarea>
+        </div>
+
+    </div>
+
+</section>
+
+
+<section id="options-section" class="panel">
+
+    <div class="panel-section panel-section-header">
+        <span class="text-section-header" data-i18n="serverConfigurationTitle"></span>
+    </div>
+
+    <div class="panel-section panel-section-formElements">
+        <div class="panel-formElements-item browser-style">
+            <label data-i18n="serverSelect"></label>
+            <select id="server-list" class="browser-style"></select>
+        </div>
+    </div>
+
+    <div class="panel-section-separator"></div>
+
+    <div class="panel-section panel-section-formElements">
+
+        <div class="panel-formElements-item browser-style">
+            <label data-i18n="serverNameOption"></label>
+            <input type="text" id="name" />
+        </div>
+
+        <div class="panel-formElements-item browser-style">
+            <label data-i18n="bittorrentClientOption"></label>
+            <select id="application" class="browser-style">
+            </select>
+        </div>
+
+        <div class="panel-formElements-item browser-style">
+            <label data-i18n="serverAddressOption"></label>
+            <input type="text" id="hostname" />
+        </div>
+
+        <div class="panel-formElements-item browser-style">
+            <label data-i18n="usernameOption"></label>
+            <input type="text" id="username" />
+        </div>
+
+        <div class="panel-formElements-item browser-style">
+            <label data-i18n="passwordOption"></label>
+            <input type="password" id="password" />
+        </div>
+
+        <div class="panel-formElements-item browser-style" style="align-items:flex-start;flex-direction:column" data-panel="directories">
+            <label for="directories" data-i18n="serverDirectoriesOption"></label>
+            <textarea id="directories" class="browser-style" style="width:250px"></textarea>
+        </div>
+
+    </div>
+
+</section>
+
+<div class="panel-formElements-item">
+    <button id="save-options" class="browser-style default disabled" data-i18n="saveAction"></button>
+    <button id="remove-server" class="browser-style disabled" data-i18n="removeAction" style="margin:0 0 0 auto;"></button>
+</div>
+
+<script src="../util.js"></script>
+<script src="options.js"></script>
+
+</body>
+</html>
