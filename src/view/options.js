@@ -66,7 +66,7 @@ const restoreOptions = () => {
     loadOptions().then((newOptions) => {
         options = newOptions;
 
-        document.querySelector('#contextmenu').checked = options.globals.contextmenu;
+        document.querySelector('[name="contextmenu"][value="' + options.globals.contextMenu + '"]').checked = true;
         document.querySelector('#catchurls').checked = options.globals.catchUrls;
         document.querySelector('#addpaused').checked = options.globals.addPaused;
 
@@ -109,6 +109,7 @@ const restoreServer = (id) => {
     document.querySelector('#hostname').value = server.hostname;
     document.querySelector('#username').value = server.username;
     document.querySelector('#password').value = server.password;
+    document.querySelector('#directories').value = server.directories.join('\n');
 
     document.querySelector('#application').dispatchEvent(new Event('change'));
 
