@@ -66,7 +66,7 @@ const restoreOptions = () => {
     loadOptions().then((newOptions) => {
         options = newOptions;
 
-        document.querySelector('#contextmenu').checked = options.globals.showcontextmenu;
+        document.querySelector('#contextmenu').checked = options.globals.contextmenu;
         document.querySelector('#catchurls').checked = options.globals.catchUrls;
         document.querySelector('#addpaused').checked = options.globals.addPaused;
 
