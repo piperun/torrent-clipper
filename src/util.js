@@ -3,7 +3,7 @@ const clientList = [
         id: 'biglybt',
         name: 'BiglyBT',
         addressPlaceholder: 'http://127.0.0.1:9091/',
-        torrentOptions: ['paused']
+        torrentOptions: ['paused', 'path']
     },
     {
         id: 'cloudtorrent',
@@ -14,19 +14,25 @@ const clientList = [
         id: 'deluge',
         name: 'Deluge Web UI',
         addressPlaceholder: 'http://127.0.0.1:8112/',
-        torrentOptions: ['paused']
+        torrentOptions: ['paused', 'path']
     },
     {
         id: 'flood',
         name: 'Flood',
         addressPlaceholder: 'http://127.0.0.1:3000/',
-        torrentOptions: ['paused', 'label']
+        torrentOptions: ['paused', 'label', 'path']
     },
     {
         id: 'rutorrent',
         name: 'ruTorrent',
         addressPlaceholder: 'http://127.0.0.1:80/',
-        torrentOptions: ['paused', 'label']
+        torrentOptions: ['paused', 'label', 'path'],
+        clientOptions: [
+            {
+                name: 'fast_resume',
+                description: chrome.i18n.getMessage('skipHashCheckOption')
+            }
+        ]
     },
     {
         id: 'tixati',
@@ -38,7 +44,7 @@ const clientList = [
         id: 'transmission',
         name: 'Transmission',
         addressPlaceholder: 'http://127.0.0.1:9091/',
-        torrentOptions: ['paused']
+        torrentOptions: ['paused', 'path']
     },
     {
         id: 'utorrent',
@@ -49,7 +55,17 @@ const clientList = [
         id: 'qbittorrent',
         name: 'qBittorrent',
         addressPlaceholder: 'http://127.0.0.1:8080/',
-        torrentOptions: ['paused', 'label']
+        torrentOptions: ['paused', 'label', 'path'],
+        clientOptions: [
+            {
+                name: 'sequentialDownload',
+                description: chrome.i18n.getMessage('sequentialDownloadOption')
+            },
+            {
+                name: 'firstLastPiecePrio',
+                description: chrome.i18n.getMessage('firstLastPiecePriorityOption')
+            }
+        ]
     },
     {
         id: 'qbittorrent_404',
@@ -93,7 +109,7 @@ const loadOptions = () => {
         globals: {
             currentServer: 0,
             addPaused: false,
-            showcontextmenu: true,
+            contextMenu: 1,
             catchUrls: true,
             labels: []
         },
@@ -103,7 +119,9 @@ const loadOptions = () => {
                 application: clientList[0].id,
                 hostname: '',
                 username: '',
-                password: ''
+                password: '',
+                directories: [],
+                clientOptions: {}
             }
         ]
     };
@@ -124,13 +142,21 @@ const isMagnetUrl = (url) => {
     return !!url.match(/^magnet:/);
 }
 
-const isTorrentUrl = (url) => {
-    if (url.match(/\.torrent$/))
-        return true;
-    else if (url.match(/torrents\.php\?action=download&id=\d+/)) // gazelle
-        return true;
+const whitelist = [
+    // Generic
+    /\.torrent$/,
+    /\.torrent\?/,
 
-    return false;
+    // Software specific
+    /\/torrents\.php\?action=download&id=\d+/, // Gazelle
+
+    // Site specific
+    /^https:\/\/anidex\.info\/dl\/\d+$/,
+    /^https:\/\/animebytes\.tv\/torrent\/\d+\/download\/$/,
+];
+
+const isTorrentUrl = (url) => {
+    return whitelist.some((regexp) => !!url.match(regexp));
 }
 
 const getMagnetUrlName = (url) => {

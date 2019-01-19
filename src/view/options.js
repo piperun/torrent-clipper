@@ -1,39 +1,56 @@
 var options;
 
 const serverSelect = document.querySelector('#server-list');
+const saveButton = document.querySelector('#save-options');
+
+const isLabelsSupported = (servers) => servers.some((server) => {
+    const client = clientList.find((client) => client.id === server.application);
+
+    if (client && client.torrentOptions.includes('label')) {
+        return true;
+    }
+    return false;
+});
 
 const persistOptions = () => {
-    options.globals.showcontextmenu = document.querySelector('#contextmenu').checked;
+    options.globals.contextMenu = ~~document.querySelector('[name="contextmenu"]:checked').value;
     options.globals.catchUrls = document.querySelector('#catchurls').checked;
     options.globals.addPaused = document.querySelector('#addpaused').checked;
 
     const labels = document.querySelector('#labels').value.split(/\n/g) || [];
     options.globals.labels = labels.map((label) => label.trim()).filter((label) => label.length);
 
+    const directories = document.querySelector('#directories').value.split(/\n/g) || [];
+
+    let clientOptions = {};
+    Array.from(document.querySelectorAll('*[id^="clientOptions"]')).forEach((element) => {
+        clientOptions[element.id.match(/\[(.+?)\]$/)[1]] = element.checked;
+    });
+
     options.servers[~~serverSelect.value] = {
         name: document.querySelector('#name').value,
         application: document.querySelector('#application').value,
         hostname: document.querySelector('#hostname').value.replace(/\s+/, '').replace(/\/?$/, '/'),
         username: document.querySelector('#username').value,
-        password: document.querySelector('#password').value
+        password: document.querySelector('#password').value,
+        directories: directories.map((directory) => directory.trim()).filter((directory) => directory.length),
+        clientOptions: clientOptions
     };
 
     saveOptions(options);
 
-    document.querySelector('#save-options').classList.add('disabled');
+    saveButton.setAttribute('disabled', true);
 }
 
 const restoreOptions = () => {
-
-    const saveButton = document.querySelector('#save-options');
-
     document.querySelectorAll('textarea, input, select:not(#server-list)').forEach((element) => {
         element.addEventListener('input', () => {
-            saveButton.classList.remove('disabled');
+            saveButton.removeAttribute('disabled');
         }, { passive: true });
     });
 
     document.querySelector('#labels').placeholder = 'Label\nAnother label'.replace(/\\n/g, '\n');
+    document.querySelector('#directories').placeholder = '/home/user/downloads\n/data/incomplete'.replace(/\\n/g, '\n');
 
     document.querySelectorAll('[data-i18n]').forEach((element) => {
         element.textContent = chrome.i18n.getMessage(element.getAttribute('data-i18n'));
@@ -59,6 +76,7 @@ const restoreOptions = () => {
         restoreServer(serverSelect.value);
     });
 
+    saveButton.setAttribute('disabled', true);
 }
 
 const restoreServerList = () => {
@@ -95,9 +113,9 @@ const restoreServer = (id) => {
     document.querySelector('#application').dispatchEvent(new Event('change'));
 
     if (options.servers.length > 1)
-        document.querySelector('#remove-server').classList.remove('disabled');
+        document.querySelector('#remove-server').removeAttribute('disabled');
     else
-        document.querySelector('#remove-server').classList.add('disabled');
+        document.querySelector('#remove-server').setAttribute('disabled', true);
 }
 
 const addServer = () => {
@@ -106,7 +124,8 @@ const addServer = () => {
         application: clientList[0].id,
         hostname: '',
         username: '',
-        password: ''
+        password: '',
+        directories: []
     });
 
     restoreServerList();
@@ -165,10 +184,45 @@ document.querySelector('#application').addEventListener('change', (e) => {
         if (currentAddress === '' || clientList.find((client) => client.addressPlaceholder === currentAddress))
             document.querySelector('#hostname').value = client.addressPlaceholder;
 
+        document.querySelector('[data-panel="directories"]').style.display =
+            client.torrentOptions && client.torrentOptions.includes('path') ? 'flex' : 'none';
+
+        document.querySelector('[data-panel="labels"]').style.display =
+            isLabelsSupported(options.servers) || (client.torrentOptions && client.torrentOptions.includes('label')) ? 'flex' : 'none';
+
         if (client.id === 'deluge')
             document.querySelector('#username').setAttribute('disabled', 'true');
         else
             document.querySelector('#username').removeAttribute('disabled');
+
+        let clientOptionsPanel = document.querySelector('[data-panel="clientOptions"]');
+        Array.from(clientOptionsPanel.childNodes).forEach((element) =>
+            element.parentNode.removeChild(element));
+
+        if (client.clientOptions) {
+            const server = options.servers[options.globals.currentServer];
+
+            client.clientOptions.forEach((option) => {
+                let container = document.createElement('div');
+                container.className = 'panel-formElements-item browser-style';
+
+                let input = document.createElement('input');
+                input.type = 'checkbox';
+                input.id = 'clientOptions[' + option.name + ']';
+                input.checked = server.application === client.id ? !!server.clientOptions[option.name] : false;
+                input.addEventListener('input', () => {
+                    saveButton.removeAttribute('disabled');
+                }, { passive: true });
+                container.appendChild(input);
+
+                let label = document.createElement('label');
+                label.htmlFor = 'clientOptions[' + option.name + ']';
+                label.textContent = option.description;
+                container.appendChild(label);
+
+                clientOptionsPanel.appendChild(container);
+            });
+        }
     }
 });
 document.querySelector('#hostname').addEventListener('input', (e) => {

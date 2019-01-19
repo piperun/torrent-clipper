@@ -5,7 +5,7 @@ chrome.storage.onChanged.addListener((changes) => {
 
     removeContextMenu();
 
-    if (options.globals.showcontextmenu && options.servers[options.globals.currentServer].hostname !== '')
+    if (options.globals.contextMenu && options.servers[options.globals.currentServer].hostname !== '')
         createContextMenu();
 
     if (options.servers.length > 1)
@@ -17,7 +17,7 @@ chrome.storage.onChanged.addListener((changes) => {
 loadOptions().then((newOptions) => {
     options = newOptions;
 
-    if (options.globals.showcontextmenu && options.servers[options.globals.currentServer].hostname !== '')
+    if (options.globals.contextMenu && options.servers[options.globals.currentServer].hostname !== '')
         createContextMenu();
 
     if (options.servers.length > 1)
@@ -79,7 +79,7 @@ const addTorrent = (url, referer = null, torrentOptions = {}) => {
 
 const fetchTorrent = (url, referer) => {
     return new Promise((resolve, reject) => {
-        createchromeRequest(url, referer).then((removeEventListeners) => {
+        createBrowserRequest(url, referer).then((removeEventListeners) => {
             fetch(url, {
                 headers: new Headers({
                     'Accept': 'application/x-bittorrent,*/*;q=0.9'
@@ -105,7 +105,7 @@ const fetchTorrent = (url, referer) => {
     });
 }
 
-const createchromeRequest = (url, referer) => {
+const createBrowserRequest = (url, referer) => {
     return new Promise((resolve, reject) => {
         const listener = (details) => {
             let requestHeaders = details.requestHeaders;
@@ -140,7 +140,7 @@ const createchromeRequest = (url, referer) => {
 const createServerSelectionContextMenu = () => {
     let context = ['browser_action'];
 
-    if (options.globals.showcontextmenu)
+    if (options.globals.contextMenu)
         context.push('page');
 
     options.servers.forEach((server, id) => {
@@ -172,6 +172,8 @@ const createDefaultMenu = () => {
 }
 
 const createContextMenu = () => {
+    const serverOptions = options.servers[options.globals.currentServer];
+
     chrome.contextMenus.create({
       id: 'add-torrent',
       title: chrome.i18n.getMessage('addTorrentAction'),
@@ -180,29 +182,48 @@ const createContextMenu = () => {
 
     const client = clientList.find((client) => client.id === options.servers[options.globals.currentServer].application);
 
-    if (client.torrentOptions && client.torrentOptions.includes('paused')) {
-        chrome.contextMenus.create({
-          id: 'add-torrent-paused',
-          title: chrome.i18n.getMessage('addTorrentPausedAction'),
-          contexts: ['link']
-        });
-    }
-
-    if (client.torrentOptions && client.torrentOptions.includes('label') && options.globals.labels.length) {
-        chrome.contextMenus.create({
-            id: 'add-torrent-label',
-            title: chrome.i18n.getMessage('addTorrentLabelAction'),
-            contexts: ['link']
-        });
-
-        options.globals.labels.forEach((label, i) => {
+    if (options.globals.contextMenu === 1 && client.torrentOptions) {
+        if (client.torrentOptions.includes('paused')) {
             chrome.contextMenus.create({
-                id: 'add-torrent-label-' + i,
-                parentId: 'add-torrent-label',
-                title: label,
+              id: 'add-torrent-paused',
+              title: chrome.i18n.getMessage('addTorrentPausedAction'),
+              contexts: ['link']
+            });
+        }
+
+        if (client.torrentOptions.includes('label') && options.globals.labels.length) {
+            chrome.contextMenus.create({
+                id: 'add-torrent-label',
+                title: chrome.i18n.getMessage('addTorrentLabelAction'),
                 contexts: ['link']
             });
-        });
+
+            options.globals.labels.forEach((label, i) => {
+                chrome.contextMenus.create({
+                    id: 'add-torrent-label-' + i,
+                    parentId: 'add-torrent-label',
+                    title: label,
+                    contexts: ['link']
+                });
+            });
+        }
+
+        if (client.torrentOptions.includes('path') && serverOptions.directories.length) {
+            chrome.contextMenus.create({
+                id: 'add-torrent-path',
+                title: chrome.i18n.getMessage('addTorrentPathAction'),
+                contexts: ['link']
+            });
+
+            serverOptions.directories.forEach((directory, i) => {
+                chrome.contextMenus.create({
+                    id: 'add-torrent-path-' + i,
+                    parentId: 'add-torrent-path',
+                    title: directory,
+                    contexts: ['link']
+                });
+            });
+        }
     }
 }
 
@@ -214,6 +235,9 @@ const registerHandler = () => {
     chrome.contextMenus.onClicked.addListener((info, tab) => {
         const currentServer = info.menuItemId.match(/^current\-server\-(\d+)$/);
         const labelId = info.menuItemId.match(/^add\-torrent\-label\-(\d+)$/);
+        const pathId = info.menuItemId.match(/^add\-torrent\-path\-(\d+)$/);
+
+        const clientOptions = options.servers[options.globals.currentServer].clientOptions || {};
 
         if (info.menuItemId === 'catch-urls')
             toggleURLCatching();
@@ -221,19 +245,28 @@ const registerHandler = () => {
             toggleAddPaused();
         else if (info.menuItemId === 'add-torrent')
             addTorrent(info.linkUrl, info.pageUrl, {
-                paused: options.globals.addPaused
+                paused: options.globals.addPaused,
+                ...clientOptions
             });
         else if (info.menuItemId === 'add-torrent-paused')
             addTorrent(info.linkUrl, info.pageUrl, {
-                paused: true
+                paused: true,
+                ...clientOptions
             });
         else if (labelId)
             addTorrent(info.linkUrl, info.pageUrl, {
                 paused: options.globals.addPaused,
-                label: options.globals.labels[~~labelId[1]]
+                label: options.globals.labels[~~labelId[1]],
+                ...clientOptions
+            });
+        else if (pathId)
+            addTorrent(info.linkUrl, info.pageUrl, {
+                paused: options.globals.addPaused,
+                path: options.servers[options.globals.currentServer].directories[~~pathId[1]],
+                ...clientOptions
             });
         else if (currentServer)
-            setCurrentServer(parseInt(currentServer[1]));
+            setCurrentServer(~~currentServer[1]);
     });
 
     chrome.browserAction.onClicked.addListener(() => {
@@ -280,7 +313,7 @@ const notification = (message) => {
     chrome.notifications.create({
         type: 'basic',
         iconUrl: chrome.extension.getURL('icon/default-48.png'),
-        title: 'Torrent Control',
+        title: 'Torrent Clipper',
         message: message
     }, (id) => setTimeout(() => chrome.notifications.clear(id), 3000));
 }
