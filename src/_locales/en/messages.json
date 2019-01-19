@@ -94,5 +94,17 @@
   "torrentParseError": {
     "message": "Failed to read torrent. ($1)",
     "description": "Parse error."
+  },
+  "sequentialDownloadOption": {
+    "message": "Sequential download",
+    "description": "Client option"
+  },
+  "firstLastPiecePriorityOption": {
+    "message": "Prioritize first and last piece",
+    "description": "Client option"
+  },
+  "skipHashCheckOption": {
+    "message": "Skip hash check",
+    "description": "Client option"
   }
 }
