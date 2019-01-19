@@ -180,7 +180,7 @@ const createContextMenu = () => {
       contexts: ['link']
     });
 
-    const client = clientList.find((client) => client.id === options.servers[options.globals.currentServer].application);
+    const client = clientList.find((client) => client.id === serverOptions.application);
 
     if (options.globals.contextMenu === 1 && client.torrentOptions) {
         if (client.torrentOptions.includes('paused')) {
