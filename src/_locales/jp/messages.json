@@ -1,0 +1,110 @@
+{
+  "addonConfigurationTitle": {
+    "message": "アドオンの構成",
+    "description": "Addon configuration"
+  },
+  "contextmenuOption": {
+    "message": "コンテキストメニューを表示",
+    "description": "Show context menu"
+  },
+  "catchUrlsOption": {
+    "message": "トレントURLをキャッチ",
+    "description": "Catch torrent URLs"
+  },
+  "addPausedOption": {
+    "message": "一時停止としてトレントを追加",
+    "description": "Add as paused by default"
+  },
+  "torrentLabelsOption": {
+    "message": "ラベル",
+    "description": "Label list option"
+  },
+  "addTorrentAction": {
+    "message": "トレントを追加する",
+    "description": "Context menu action"
+  },
+  "addTorrentPausedAction": {
+    "message": "トレントを追加する (一時停止)",
+    "description": "Context menu action"
+  },
+  "addTorrentLabelAction": {
+    "message": "ラベル付きのトレントを追加する",
+    "description": "Context menu action"
+  },
+  "saveAction": {
+    "message": "セーブ",
+    "description": "Save action"
+  },
+  "removeAction": {
+    "message": "サーバーを削除",
+    "description": "Remove action"
+  },
+  "addServerAction": {
+    "message": "新しいサーバーを追加する",
+    "description": "Add server action"
+  },
+  "serverConfigurationTitle": {
+    "message": "サーバー構成",
+    "description": "Server configuration title"
+  },
+  "bittorrentClientOption": {
+    "message": "ビットトレントクライアント",
+    "description": "Bittorrent client option"
+  },
+  "serverSelect": {
+    "message": "現在のサーバー",
+    "description": "Server select"
+  },
+  "serverNameOption": {
+    "message": "サーバーの名前",
+    "description": "Server name option"
+  },
+  "serverAddressOption": {
+    "message": "サーバーアドレス",
+    "description": "Server address option"
+  },
+  "usernameOption": {
+    "message": "Username",
+    "description": "Username option"
+  },
+  "passwordOption": {
+    "message": "Password",
+    "description": "Password option"
+  },
+  "torrentAddedNotification": {
+    "message": "トレント追加",
+    "description": "Torrent added notification."
+  },
+  "loginError": {
+    "message": "ログインに失敗しました",
+    "description": "Login error."
+  },
+  "apiError": {
+    "message": "不明な回答。 ($1)",
+    "description": "Unknown response."
+  },
+  "torrentAddError": {
+    "message": "トレントを追加できませんでした。 $1",
+    "description": "Add error."
+  },
+  "torrentFetchError": {
+    "message": "トレントの取得に失敗しました。 ($1)",
+    "description": "Fetch error."
+  },
+  "torrentParseError": {
+    "message": "トレントの読み込みに失敗しました。 ($1)",
+    "description": "Parse error."
+  },
+  "sequentialDownloadOption": {
+    "message": "順次ダウンロード",
+    "description": "Client option"
+  },
+  "firstLastPiecePriorityOption": {
+    "message": "最初と最後の部分を優先する",
+    "description": "Client option"
+  },
+  "skipHashCheckOption": {
+    "message": "ハッシュチェックをスキップする",
+    "description": "Client option"
+  }
+}
