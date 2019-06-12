@@ -71,6 +71,10 @@
     "message": "Salasana",
     "description": "Password option"
   },
+  "serverDirectoriesOption": {
+    "message": "Lataushakemistot",
+    "description": "Server directories option"
+  },
   "torrentAddedNotification": {
     "message": "Torrentti lisätty",
     "description": "Torrent added notification."
