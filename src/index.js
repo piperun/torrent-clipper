@@ -83,8 +83,7 @@ const fetchTorrent = (url, referer) => {
             fetch(url, {
                 headers: new Headers({
                     'Accept': 'application/x-bittorrent,*/*;q=0.9'
-                }),
-                credentials: 'include'
+                })
             }).then((response) => {
                 if (!response.ok)
                     throw new Error(chrome.i18n.getMessage('torrentFetchError', response.status.toString() + ': ' + response.statusText));
@@ -107,15 +106,26 @@ const fetchTorrent = (url, referer) => {
 
 const createBrowserRequest = (url, referer) => {
     return new Promise((resolve, reject) => {
-        const listener = (details) => {
+        const listener = async (details) => {
             let requestHeaders = details.requestHeaders;
+
+            const currentTab = await getCurrentTab();
+            const cookies = currentTab ? await getCookies(currentTab.cookieStoreId, url) : [];
 
             requestHeaders = requestHeaders.filter((header) => {
                 return ![
+                    'cookie',
                     'origin',
                     'referer',
                 ].includes(header.name.toLowerCase());
             });
+
+            if (cookies.length) {
+                requestHeaders.push({
+                    name: 'Cookie',
+                    value: cookies.map((cookie) => [cookie.name, cookie.value].join('=')).join('; ')
+                });
+            }
 
             if (referer) {
                 requestHeaders.push({
@@ -153,6 +163,11 @@ const createServerSelectionContextMenu = () => {
             title: server.name,
             contexts: context
         });
+    });
+
+    chrome.contextMenus.create({
+        type: 'separator',
+        contexts: ['browser_action'],
     });
 }
 
@@ -221,6 +236,36 @@ const createContextMenu = () => {
                 chrome.contextMenus.create({
                     id: 'add-torrent-path-' + i,
                     parentId: 'add-torrent-path',
+                    title: directory,
+                    contexts: ['link']
+                });
+            });
+        }
+    } else if (client.torrentOptions) {
+        if (client.torrentOptions.includes('label') && options.globals.labels.length) {
+            chrome.contextMenus.create({
+                contexts: ['link'],
+                type: 'separator'
+            });
+
+            options.globals.labels.forEach((label, i) => {
+                chrome.contextMenus.create({
+                    id: 'add-torrent-label-' + i,
+                    title: label,
+                    contexts: ['link']
+                });
+            });
+        }
+
+        if (client.torrentOptions.includes('path') && serverOptions.directories.length) {
+            chrome.contextMenus.create({
+                contexts: ['link'],
+                type: 'separator'
+            });
+
+            serverOptions.directories.forEach((directory, i) => {
+                chrome.contextMenus.create({
+                    id: 'add-torrent-path-' + i,
                     title: directory,
                     contexts: ['link']
                 });
@@ -314,8 +359,7 @@ const registerHandler = () => {
 const notification = (message) => {
     chrome.notifications.create({
         type: 'basic',
-        iconUrl: chrome.extension.getURL('icon/default-48.png'),
-        title: 'Torrent Clipper',
+
         message: message
     }, (id) => setTimeout(() => chrome.notifications.clear(id), 3000));
 }
@@ -333,4 +377,27 @@ const toggleURLCatching = () => {
 const toggleAddPaused = () => {
     options.globals.addPaused = !options.globals.addPaused;
     saveOptions(options);
+}
+
+const getCurrentTab = async () => {
+    const activeTabs = await new Promise((resolve) => {
+        chrome.tabs.query({
+            active: true,
+            windowId: chrome.windows.WINDOW_ID_CURRENT
+        }, (activeTabs) => resolve(activeTabs))
+    });
+
+    if (activeTabs.length > 0)
+      return activeTabs[0];
+
+    return null;
+}
+
+const getCookies = async (cookieStoreId, torrentUrl) => {
+    return await new Promise((resolve) => {
+        chrome.cookies.getAll({
+            url: torrentUrl,
+            storeId: cookieStoreId 
+        }, (cookies) => resolve(cookies))
+    });
 }

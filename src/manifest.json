@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Torrent Clipper",
-  "version": "0.2.9",
+  "version": "0.2.10",
   "description": "Add torrent and magnet links to your Bittorrent client's web interface.",
   "default_locale": "en",
   "icons": {
@@ -10,6 +10,7 @@
     "64": "icon/default-64.png"
   },
   "options_ui": {
+    "browser_style": true,
     "page": "view/options.html"
   },
   "browser_action": {
@@ -20,8 +21,14 @@
       "size": 64
     }]
   },
+  "browser_specific_settings": {
+    "gecko": {
+      "strict_min_version": "57.0"
+    }
+  },
   "permissions": [
     "contextMenus",
+    "cookies",
     "notifications",
     "storage",
     "webRequest",
