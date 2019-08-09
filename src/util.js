@@ -127,7 +127,7 @@ const loadOptions = () => {
     };
 
     return new Promise((resolve, reject) => {
-        chrome.storage.sync.get(['servers'], (options) => {
+        chrome.storage.sync.get(['globals', 'servers'], (options) => {
             mergeObjects(defaults, options);
             resolve(defaults);
         });
