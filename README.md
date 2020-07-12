@@ -1,5 +1,7 @@
 Add torrent and magnet links to your Bittorrent client's web interface.
 
+NOTE: if you're using qBittorrent WebUI Disable Cross-Site Request Forgery (CSRF) protection and do not run your server on 127.0.0.1.
+This is due to the design of Chrome.
 
 Features:
 - Supports magnet links
