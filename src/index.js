@@ -28,18 +28,21 @@ loadOptions().then((newOptions) => {
 });
 
 const addTorrent = (url, referer = null, torrentOptions = {}) => {
-    const serverSettings = options.servers[options.globals.currentServer];
-    const connection = getClient(serverSettings);
-    const networkErrors = [
-        'NetworkError when attempting to fetch resource.',
-    ];
-
+    
     torrentOptions = {
         paused: false,
         path: null,
         label: null,
         ...torrentOptions
     };
+
+    const server = torrentOptions.server !== undefined ? torrentOptions.server : options.globals.currentServer;
+    const serverSettings = options.servers[server];
+    
+    const connection = getClient(serverSettings);
+    const networkErrors = [
+        'NetworkError when attempting to fetch resource.',
+    ];
 
     if (isMagnetUrl(url)) {
         connection.logIn()
@@ -149,6 +152,21 @@ const createBrowserRequest = (url, referer) => {
     });
 }
 
+const addRssFeed = (url) => {
+    const serverSettings = options.servers[options.globals.currentServer];
+    const connection = getClient(serverSettings);
+
+    connection.logIn()
+        .then(() => connection.addRssFeed(url))
+        .then(() => {
+            notification(chrome.i18n.getMessage('rssFeedAddedNotification'));
+            connection.logOut();
+        }).catch((error) => {
+            connection.removeEventListeners();
+            notification(error.message);
+        });
+}
+
 const createServerSelectionContextMenu = () => {
     let context = ['browser_action'];
 
@@ -200,6 +218,14 @@ const createContextMenu = () => {
     const client = clientList.find((client) => client.id === serverOptions.application);
 
     if (options.globals.contextMenu === 1 && client.torrentOptions) {
+        if (client.torrentOptions.length > 1) {
+            chrome.contextMenus.create({
+              id: 'add-torrent-advanced',
+              title: chrome.i18n.getMessage('addTorrentAction') + ' (' + chrome.i18n.getMessage('advancedModifier') + ')',
+              contexts: ['link']
+            });
+        }
+
         if (client.torrentOptions.includes('paused')) {
             chrome.contextMenus.create({
               id: 'add-torrent-paused',
@@ -272,6 +298,21 @@ const createContextMenu = () => {
             });
         }
     }
+
+    if (client.torrentOptions && client.torrentOptions.includes('rss')) {
+        if (options.globals.contextMenu === 1) {
+            chrome.contextMenus.create({
+                contexts: ['link'],
+                type: 'separator'
+            });
+        }
+
+        chrome.contextMenus.create({
+          id: 'add-rss-feed',
+          title: chrome.i18n.getMessage('addRssFeedAction'),
+          contexts: options.globals.contextMenu === 1 ? ['selection', 'link'] : ['selection']
+        });
+    }
 }
 
 const removeContextMenu = () => {
@@ -312,40 +353,55 @@ const registerHandler = () => {
                 path: options.servers[options.globals.currentServer].directories[~~pathId[1]],
                 ...clientOptions
             });
+        else if (info.menuItemId === 'add-torrent-advanced')
+            addAdvancedDialog(info.linkUrl, !isMagnetUrl(info.linkUrl) ? info.pageUrl : null);
         else if (currentServer)
             setCurrentServer(~~currentServer[1]);
+        else if (info.menuItemId === 'add-rss-feed')
+            addRssFeed(info.linkUrl || info.selectionText.trim());
     });
 
     chrome.browserAction.onClicked.addListener(() => {
         if (options.servers[options.globals.currentServer].hostname !== '') {
-            chrome.tabs.create({
-                url: options.servers[options.globals.currentServer].hostname
-            });
+            const url = getURL(options.servers[options.globals.currentServer])
+            chrome.tabs.create({ url });
         } else {
             chrome.runtime.openOptionsPage();
         }
     });
 
-    chrome.webRequest.onBeforeRequest.addListener(
-        (details) => {
+    chrome.webRequest.onBeforeRequest.addListener((details) => {        
             let parser = document.createElement('a');
             parser.href = details.url;
             let magnetUri = decodeURIComponent(parser.pathname).substr(1);
-            addTorrent(magnetUri, null, {
-                paused: options.globals.addPaused
-            });
+
+            if (options.globals.addAdvanced) {
+                addAdvancedDialog(magnetUri);
+            } else {
+                const clientOptions = options.servers[options.globals.currentServer].clientOptions || {};
+                addTorrent(magnetUri, null, {
+                    paused: options.globals.addPaused,
+                    ...clientOptions
+                });
+            }
             return {cancel: true}
         },
         {urls: ['https://torrent-control.invalid/*']},
         ['blocking']
     );
 
-    chrome.webRequest.onBeforeRequest.addListener(
-        (details) => {
+    chrome.webRequest.onBeforeRequest.addListener((details) => {
             if (options.globals.catchUrls && details.type === 'main_frame' && isTorrentUrl(details.url)) {
-                addTorrent(details.url, details.originUrl, {
-                    paused: options.globals.addPaused
-                });
+                if (options.globals.addAdvanced) {
+                    addAdvancedDialog(details.url, details.originUrl);
+                } else {
+                    const clientOptions = options.servers[options.globals.currentServer].clientOptions || {};
+
+                    addTorrent(details.url, details.originUrl, {
+                        paused: options.globals.addPaused,
+                        ...clientOptions
+                    });
+                }
                 return {cancel: true};
             }
 
@@ -354,9 +410,51 @@ const registerHandler = () => {
         {urls: ['<all_urls>']},
         ['blocking']
     );
+
+    chrome.runtime.onMessage.addListener(
+        (request, sender, sendResponse) => {
+            if (request.type === 'addTorrent') {
+                const clientOptions = options.servers[options.globals.currentServer].clientOptions || {};
+
+                addTorrent(request.url, request.referer, {
+                    ...clientOptions,
+                    ...request.options
+                });
+            }
+        }
+    );
+}
+
+const addAdvancedDialog = (url, referer = null) => {
+    let params = new URLSearchParams();
+    params.append('url', url);
+
+    if (referer) {
+        params.append('referer', referer);
+    }
+
+    const height = 330;
+    const width = 500;
+    const top = Math.round((screen.height / 2) - (height / 2));
+    const left = Math.round((screen.width / 2) - (width / 2));
+
+    chrome.windows.create({
+        url: 'view/add_torrent.html?' + params.toString(),
+        titlePreface: chrome.i18n.getMessage('addTorrentAction'),
+        type: 'panel',
+        allowScriptsToClose: true,
+        top: top,
+        left: left,
+        height: height,
+        width: width
+    });
 }
 
 const notification = (message) => {
+    if (options && !options.globals.enableNotifications) {
+        return;
+    }
+
     chrome.notifications.create({
         type: 'basic',
 

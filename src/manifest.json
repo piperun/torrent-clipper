@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Torrent Clipper",
-  "version": "0.2.10",
+  "version": "0.2.12",
   "description": "Add torrent and magnet links to your Bittorrent client's web interface.",
   "default_locale": "en",
   "icons": {
@@ -16,6 +16,10 @@
   "browser_action": {
     "default_area": "navbar",
     "theme_icons": [{
+      "light": "icon/default-light.svg",
+      "dark": "icon/default.svg",
+      "size": 32
+    }, {
       "light": "icon/default-light.svg",
       "dark": "icon/default.svg",
       "size": 64
@@ -40,6 +44,7 @@
       "lib/tixati.js",
       "lib/transmission.js",
       "lib/utorrent.js",
+      "lib/vuze_webui.js",
       "lib/qbittorrent.js",
       "util.js",
       "index.js"

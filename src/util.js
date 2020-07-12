@@ -14,7 +14,7 @@ const clientList = [
         id: 'deluge',
         name: 'Deluge Web UI',
         addressPlaceholder: 'http://127.0.0.1:8112/',
-        torrentOptions: ['paused', 'path']
+        torrentOptions: ['paused', 'label', 'path']
     },
     {
         id: 'flood',
@@ -26,7 +26,7 @@ const clientList = [
         id: 'rutorrent',
         name: 'ruTorrent',
         addressPlaceholder: 'http://127.0.0.1:80/',
-        torrentOptions: ['paused', 'label', 'path'],
+        torrentOptions: ['paused', 'label', 'path', 'rss'],
         clientOptions: [
             {
                 name: 'fast_resume',
@@ -52,10 +52,26 @@ const clientList = [
         addressPlaceholder: 'http://127.0.0.1:8112/gui/'
     },
     {
+        id: 'vuze_remoteui',
+        name: 'Vuze Web Remote',
+        addressPlaceholder: 'http://127.0.0.1:9091/',
+        torrentOptions: ['paused', 'path']
+    },
+    {
+        id: 'vuze_webui',
+        name: 'Vuze HTML Web UI',
+        addressPlaceholder: 'http://127.0.0.1:6886/'
+    },
+    {
+        id: 'vuze_webui_100',
+        name: 'Vuze HTML Web UI (<1.0.0)',
+        addressPlaceholder: 'http://127.0.0.1:6886/'
+    },
+    {
         id: 'qbittorrent',
         name: 'qBittorrent',
         addressPlaceholder: 'http://127.0.0.1:8080/',
-        torrentOptions: ['paused', 'label', 'path'],
+        torrentOptions: ['paused', 'label', 'path', 'rss'],
         clientOptions: [
             {
                 name: 'sequentialDownload',
@@ -92,6 +108,15 @@ const getClient = (serverSettings) => {
             return new TransmissionApi(serverSettings);
         case 'utorrent':
             return new uTorrentApi(serverSettings);
+        case 'vuze_remoteui':
+            return new TransmissionApi(serverSettings);
+        case 'vuze_webui':
+            return new VuzeWebUIApi(serverSettings);
+        case 'vuze_webui_100':
+            return new VuzeWebUIApi({
+                apiVersion: 1,
+                ...serverSettings
+            });
         case 'qbittorrent':
             return new qBittorrentApi(serverSettings);
         case 'qbittorrent_404':
@@ -109,8 +134,10 @@ const loadOptions = () => {
         globals: {
             currentServer: 0,
             addPaused: false,
+            addAdvanced: false,
             contextMenu: 1,
             catchUrls: true,
+            enableNotifications: true,
             labels: []
         },
         servers: [
@@ -149,6 +176,9 @@ const whitelist = [
 
     // Software specific
     /\/torrents\.php\?action=download&id=\d+/, // Gazelle
+    /\/dl\/.+?\/\?jackett_apikey=[a-z0-9]{32}&path=/, // Jackett
+    /\/download\.php\?id=[a-z0-9]{40}&f=.+?&key=/, // Xbtit
+    /\/torrents\/download\/\d+/, // UNIT3D
 
     // Site specific
     /^https:\/\/anidex\.info\/dl\/\d+$/,
@@ -207,4 +237,14 @@ const mergeObjects = (target, source) => {
         target.hasOwnProperty(key) && typeof target[key] === 'object' ?
             mergeObjects(target[key], source[key]) : target[key] = source[key]
     );
+}
+
+const getURL = (serverOptions) => {
+    const { hostname, username, password } = serverOptions;
+    const url = new URL(hostname);
+    
+    url.username = username ? username : '';
+    url.password = password ? password : '';
+
+    return url.toString()
 }

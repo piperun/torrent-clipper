@@ -23,6 +23,14 @@
     "message": "Catch torrent URLs",
     "description": "Catch torrent URLs"
   },
+  "addAdvancedOption": {
+    "message": "Add via advanced dialog",
+    "description": "Add torrents via advanced dialog"
+  },
+  "enableNotificationsOption": {
+    "message": "Show notifications",
+    "description": "Enable notifications option"
+  },
   "addPausedOption": {
     "message": "Add torrents as paused",
     "description": "Add as paused by default"
@@ -46,6 +54,14 @@
   "addTorrentPathAction": {
     "message": "Add torrent with path",
     "description": "Context menu action"
+  },
+  "addRssFeedAction": {
+    "message": "Add RSS feed",
+    "description": "Context menu action"
+  },
+  "advancedModifier": {
+    "message": "Advanced",
+    "description": "Advanced modifier"
   },
   "saveAction": {
     "message": "Save",
@@ -95,6 +111,10 @@
     "message": "Torrent added",
     "description": "Torrent added notification."
   },
+  "rssFeedAddedNotification": {
+    "message": "RSS feed added",
+    "description": "RSS feed added notification."
+  },
   "loginError": {
     "message": "Failed to login",
     "description": "Login error."
@@ -102,6 +122,10 @@
   "apiError": {
     "message": "Unknown response. ($1)",
     "description": "Unknown response."
+  },
+  "rssFeedAddError": {
+    "message": "Failed to add RSS feed. $1",
+    "description": "Add error."
   },
   "torrentAddError": {
     "message": "Failed to add torrent. $1",
@@ -115,6 +139,10 @@
     "message": "Failed to read torrent. ($1)",
     "description": "Parse error."
   },
+  "torrentLabelAddError": {
+    "message": "Failed to add label for torrent.",
+    "description": "Add error."
+  },
   "sequentialDownloadOption": {
     "message": "Sequential download",
     "description": "Client option"
@@ -126,5 +154,33 @@
   "skipHashCheckOption": {
     "message": "Skip hash check",
     "description": "Client option"
+  },
+  "addTorrentTitle": {
+    "message": "Add torrent",
+    "description": "Add torrent"
+  },
+  "torrentUrl": {
+    "message": "Torrent url",
+    "description": "Torrent url"
+  },
+  "labelSelect": {
+    "message": "Label",
+    "description": "Label select"
+  },
+  "downloadLocationSelect": {
+    "message": "Download location",
+    "description": "Download location select"
+  },
+  "defaultOption": {
+    "message": "Default",
+    "description": "Default option"
+  },
+  "noneOption": {
+    "message": "None",
+    "description": "None option"
+  },
+  "addAsPausedOption": {
+    "message": "Add as paused",
+    "description": "Add as paused"
   }
 }
