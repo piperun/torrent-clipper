@@ -41,7 +41,7 @@ class BaseClient {
         chrome.webRequest.onBeforeSendHeaders.addListener(
             this.listeners.onBeforeSendHeaders,
             {urls: [hostname.replace(/\:\d+/, '') + '*']},
-            ['blocking', 'requestHeaders']
+            ['blocking', 'requestHeaders', 'extraHeaders']
         );
     }
 
