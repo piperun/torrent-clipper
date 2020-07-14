@@ -1,6 +1,6 @@
 Add torrent and magnet links to your Bittorrent client's web interface.
 
-This is due to the design of Chrome.
+
 
 Features:
 - Supports magnet links
