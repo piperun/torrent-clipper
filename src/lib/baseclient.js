@@ -29,7 +29,7 @@ class BaseClient {
         chrome.webRequest.onHeadersReceived.addListener(
             this.listeners.onHeadersReceived,
             {urls: [hostname.replace(/\:\d+/, '') + '*']},
-            ['blocking', 'responseHeaders']
+            ['blocking', 'responseHeaders', 'extraHeaders']
         );
     }
 
