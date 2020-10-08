@@ -28,6 +28,13 @@ A clear and concise description of what you expected to happen.
  - Client [e.g rtorrent]
  - Version [e.g 0.6.9]
 
+**Extension Error log**
+
+Vanilla Chrome example:
+ - Chrome menu -> More Tools -> Extensions
+  - Details on Torrent Clipper -> background page -> Console
+    
+
 ********************************Optional************************************
 
 **Screenshots**
