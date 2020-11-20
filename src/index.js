@@ -391,23 +391,28 @@ const registerHandler = () => {
     );
 
     chrome.webRequest.onBeforeRequest.addListener((details) => {
-            if (options.globals.catchUrls && details.type === 'main_frame' && isTorrentUrl(details.url)) {
-                if (options.globals.addAdvanced) {
-                    addAdvancedDialog(details.url, details.originUrl);
-                } else {
-                    const clientOptions = options.servers[options.globals.currentServer].clientOptions || {};
+            if (options.globals.catchUrls && details.frameId == 0) {
+                if (isTorrentUrl(details.url)) {
+                    if (options.globals.addAdvanced) {
+                        addAdvancedDialog(details.url, details.originUrl || details.initiator);
+                    } else {
+                        const clientOptions = options.servers[options.globals.currentServer].clientOptions || {};
 
-                    addTorrent(details.url, details.originUrl, {
-                        paused: options.globals.addPaused,
-                        ...clientOptions
-                    });
+                        addTorrent(details.url, details.originUrl || details.initiator, {
+                            paused: options.globals.addPaused,
+                            ...clientOptions
+                        });
+                    }
+                    return {cancel: true};
                 }
-                return {cancel: true};
-            }
 
-            return {cancel: false};
+                return {cancel: false};
+            }
         },
-        {urls: ['<all_urls>']},
+        {
+            urls: ['<all_urls>'],
+            types: ['main_frame']
+        },
         ['blocking']
     );
 

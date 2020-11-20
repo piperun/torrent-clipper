@@ -185,8 +185,13 @@ const whitelist = [
     /^https:\/\/animebytes\.tv\/torrent\/\d+\/download\/$/,
 ];
 
+const blacklist = [
+    // Plugin url
+    /^chrome-extension:\/\//,
+]
+
 const isTorrentUrl = (url) => {
-    return whitelist.some((regexp) => !!url.match(regexp));
+    return whitelist.some((regexp) => !!url.match(regexp)) && !blacklist.some((regexp) => !!url.match(regexp));
 }
 
 const getMagnetUrlName = (url) => {
