@@ -1,4 +1,5 @@
 var options;
+var redirectUrls = {};
 
 chrome.storage.onChanged.addListener((changes) => {
     Object.keys(changes).forEach((key) => options[key] = changes[key].newValue);
@@ -403,9 +404,12 @@ const registerHandler = () => {
                             ...clientOptions
                         });
                     }
-                    return {cancel: true};
+                    return {
+                        redirectUrl: redirectUrls[details.tabId]
+                    };
                 }
 
+                redirectUrls[details.tabId] = details.url;
                 return {cancel: false};
             }
         },
