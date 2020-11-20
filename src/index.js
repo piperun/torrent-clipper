@@ -442,14 +442,14 @@ const addAdvancedDialog = (url, referer = null) => {
         params.append('referer', referer);
     }
 
-    const height = 330;
+    const height = 340;
     const width = 500;
     const top = Math.round((screen.height / 2) - (height / 2));
     const left = Math.round((screen.width / 2) - (width / 2));
 
     chrome.windows.create({
         url: 'view/add_torrent.html?' + params.toString(),
-        type: 'panel',
+        type: 'popup',
         top: top,
         left: left,
         height: height,
