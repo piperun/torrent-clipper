@@ -440,9 +440,7 @@ const addAdvancedDialog = (url, referer = null) => {
 
     chrome.windows.create({
         url: 'view/add_torrent.html?' + params.toString(),
-        titlePreface: chrome.i18n.getMessage('addTorrentAction'),
         type: 'panel',
-        allowScriptsToClose: true,
         top: top,
         left: left,
         height: height,

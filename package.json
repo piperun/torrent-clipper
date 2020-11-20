@@ -1,6 +1,6 @@
 {
   "name": "torrent-control",
-  "version": "0.2.12",
+  "version": "0.2.14",
   "repository": "git@github.com:piperun/torrent-clipper.git",
   "license": "LGPL",
   "scripts": {
