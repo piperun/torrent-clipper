@@ -2,14 +2,15 @@
 <html>
 <head>
     <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="extension.css">
 </head>
 <body>
 
 <section id="options-section" class="panel">
 
-    <div class="panel-section panel-section-header">
+    <header class="panel-section panel-section-header">
         <span class="text-section-header" data-i18n="addonConfigurationTitle"></span>
-    </div>
+    </header>
 
     <div class="panel-section panel-section-formElements">
         <div class="panel-formElements-item browser-style">
@@ -47,7 +48,7 @@
 
         <div class="panel-formElements-item browser-style" style="align-items:flex-start;flex-direction:column" data-panel="labels">
             <label for="labels" data-i18n="torrentLabelsOption"></label>
-            <textarea id="labels" class="browser-style" style="width:250px"></textarea>
+            <textarea id="labels" class="browser-style" style="width:100%;margin-top:6px"></textarea>
         </div>
 
     </div>
@@ -57,9 +58,9 @@
 
 <section id="options-section" class="panel">
 
-    <div class="panel-section panel-section-header">
+    <header class="panel-section panel-section-header">
         <span class="text-section-header" data-i18n="serverConfigurationTitle"></span>
-    </div>
+    </header>
 
     <div class="panel-section panel-section-formElements">
         <div class="panel-formElements-item browser-style">
@@ -102,17 +103,18 @@
 
         <div class="panel-formElements-item browser-style" style="align-items:flex-start;flex-direction:column" data-panel="directories">
             <label for="directories" data-i18n="serverDirectoriesOption"></label>
-            <textarea id="directories" class="browser-style" style="width:250px"></textarea>
+            <textarea id="directories" class="browser-style" style="width:100%;margin-top:6px"></textarea>
         </div>
 
     </div>
 
 </section>
 
-<div class="panel-formElements-item">
-    <button id="save-options" class="browser-style default disabled" data-i18n="saveAction" style="margin:0 16px 0 16px"></button>
-    <button id="remove-server" class="browser-style disabled" data-i18n="removeAction" style="margin:0 16px 0 auto"></button>
-</div>
+<footer class="panel-section panel-section-footer">
+    <button id="save-options" class="panel-section-footer-button default disabled" data-i18n="saveAction"></button>
+    <div class="panel-section-footer-separator"></div>
+    <button id="remove-server" class="panel-section-footer-button disabled" data-i18n="removeAction"></button>
+</footer>
 
 <script src="../util.js"></script>
 <script src="options.js"></script>

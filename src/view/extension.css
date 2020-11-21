@@ -15,6 +15,7 @@ body {
   display: flex;
   flex-direction: column;
   font: caption;
+  font-size: 95%;
   margin: 0;
   padding: 0;
   user-select: none;
@@ -40,6 +41,7 @@ select.browser-style {
   border: 1px solid #b1b1b1;
   box-shadow: 0 0 0 0 transparent;
   font: caption;
+  font-size: 100%;
   height: 24px;
   outline: 0 !important;
   padding: 0 8px 0;
@@ -57,6 +59,7 @@ select.browser-style {
 
 label.browser-style-label {
   font: caption;
+  font-size: 100%;
 }
 
 button.browser-style::-moz-focus-inner {
@@ -70,6 +73,7 @@ select.browser-style {
   border: 1px solid #b1b1b1;
   box-shadow: 0 0 0 0 transparent;
   font: caption;
+  font-size: 100%;
   height: 24px;
   outline: 0 !important;
   padding: 0 8px 0;
@@ -291,50 +295,60 @@ button.browser-style:focus:not(:disabled) {
 
 /* Fields */
 .browser-style > input[type="text"],
+.browser-style > input[type="password"],
 textarea.browser-style {
   background-color: #fff;
   border: 1px solid #b1b1b1;
   box-shadow: 0 0 0 0 rgba(97, 181, 255, 0);
   font: caption;
-  padding: 0 6px 0;
+  font-size: 100%;
+  padding: 6px;
   transition-duration: 250ms;
   transition-property: box-shadow;
 }
 
-.browser-style > input[type="text"] {
+.browser-style > input[type="text"],
+.browser-style > input[type="password"] {
   height: 24px;
 }
 
 .browser-style > input[type="text"].hover,
+.browser-style > input[type="password"].hover,
 textarea.browser-style.hover {
   border: 1px solid #858585;
 }
 
 .browser-style > input[type="text"]:disabled,
+.browser-style > input[type="password"]:disabled,
 textarea.browser-style:disabled {
   color: #999;
   opacity: .5;
 }
 
 .browser-style > input[type="text"].focused,
+.browser-style > input[type="password"].focused,
 textarea.browser-style.focused {
   border-color: #0996f8;
 }
 
 /* Interactive States */
 .browser-style > input[type="text"]:not(:disabled):hover,
+.browser-style > input[type="password"]:not(:disabled):hover,
 textarea.browser-style:not(:disabled):hover {
   border: 1px solid #858585;
 }
 
 .browser-style > input[type="text"]:focus,
 .browser-style > input[type="text"]:focus:hover,
+.browser-style > input[type="password"]:focus,
+.browser-style > input[type="password"]:focus:hover,
 textarea.browser-style:focus,
 textarea.browser-style:focus:hover {
   border-color: #0996f8;
 }
 
 .browser-style > input[type="text"]:invalid:not(:focus),
+.browser-style > input[type="password"]:invalid:not(:focus),
 textarea.browser-style:invalid:not(:focus) {
   border-color: var(--red-60);
 }
@@ -444,6 +458,7 @@ textarea.browser-style:invalid:not(:focus) {
 }
 
 .panel-formElements-item input[type="text"],
+.panel-formElements-item input[type="password"],
 .panel-formElements-item select.browser-style {
   flex-grow: 1;
   margin-bottom: 0;
@@ -463,37 +478,37 @@ textarea.browser-style:invalid:not(:focus) {
 }
 
 .panel-section-footer-button {
-  flex: 1 1 auto;
+  flex: 1 1;
   height: 100%;
   margin: 0;
   padding: 12px;
   text-align: center;
 }
 
-.panel-section-footer-button > .text-shortcut {
+.panel-section-footer-button:not(:disabled) > .text-shortcut {
   color: #808080;
   font-family: "Lucida Grande", caption;
   font-size: .847em;
 }
 
-.panel-section-footer-button:hover {
+.panel-section-footer-button:not(:disabled):hover {
   background-color: rgba(0, 0, 0, 0.06);
 }
 
-.panel-section-footer-button:hover:active {
+.panel-section-footer-button:not(:disabled):hover:active {
   background-color: rgba(0, 0, 0, 0.1);
 }
 
-.panel-section-footer-button.default {
+.panel-section-footer-button.default:not(:disabled) {
   background-color: #0996f8;
   color: #fff;
 }
 
-.panel-section-footer-button.default:hover {
+.panel-section-footer-button.default:not(:disabled):hover {
   background-color: #0670cc;
 }
 
-.panel-section-footer-button.default:hover:active {
+.panel-section-footer-button.default:not(:disabled):hover:active {
   background-color: #005bab;
 }
 
@@ -514,7 +529,7 @@ textarea.browser-style:invalid:not(:focus) {
 }
 
 .panel-section-tabs-button {
-  flex: 1 1 auto;
+  flex: 1 1;
   height: 100%;
   margin: 0;
   padding: 12px;
@@ -545,8 +560,6 @@ textarea.browser-style:invalid:not(:focus) {
 
 button.panel-section-footer-button,
 button.panel-section-tabs-button {
-  color: inherit;
-  background-color: unset;
   font: inherit;
   text-shadow: inherit;
   -webkit-appearance: none;
