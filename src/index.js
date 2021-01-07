@@ -1,4 +1,5 @@
 var options;
+var redirectUrls = {};
 
 chrome.storage.onChanged.addListener((changes) => {
     Object.keys(changes).forEach((key) => options[key] = changes[key].newValue);
@@ -391,23 +392,31 @@ const registerHandler = () => {
     );
 
     chrome.webRequest.onBeforeRequest.addListener((details) => {
-            if (options.globals.catchUrls && details.type === 'main_frame' && isTorrentUrl(details.url)) {
-                if (options.globals.addAdvanced) {
-                    addAdvancedDialog(details.url, details.originUrl);
-                } else {
-                    const clientOptions = options.servers[options.globals.currentServer].clientOptions || {};
+            if (options.globals.catchUrls && details.frameId == 0) {
+                if (isTorrentUrl(details.url)) {
+                    if (options.globals.addAdvanced) {
+                        addAdvancedDialog(details.url, details.originUrl || details.initiator);
+                    } else {
+                        const clientOptions = options.servers[options.globals.currentServer].clientOptions || {};
 
-                    addTorrent(details.url, details.originUrl, {
-                        paused: options.globals.addPaused,
-                        ...clientOptions
-                    });
+                        addTorrent(details.url, details.originUrl || details.initiator, {
+                            paused: options.globals.addPaused,
+                            ...clientOptions
+                        });
+                    }
+                    return {
+                        redirectUrl: redirectUrls[details.tabId]
+                    };
                 }
-                return {cancel: true};
-            }
 
-            return {cancel: false};
+                redirectUrls[details.tabId] = details.url;
+                return {cancel: false};
+            }
         },
-        {urls: ['<all_urls>']},
+        {
+            urls: ['<all_urls>'],
+            types: ['main_frame']
+        },
         ['blocking']
     );
 
@@ -433,16 +442,14 @@ const addAdvancedDialog = (url, referer = null) => {
         params.append('referer', referer);
     }
 
-    const height = 330;
+    const height = 340;
     const width = 500;
     const top = Math.round((screen.height / 2) - (height / 2));
     const left = Math.round((screen.width / 2) - (width / 2));
 
     chrome.windows.create({
         url: 'view/add_torrent.html?' + params.toString(),
-        titlePreface: chrome.i18n.getMessage('addTorrentAction'),
-        type: 'panel',
-        allowScriptsToClose: true,
+        type: 'popup',
         top: top,
         left: left,
         height: height,

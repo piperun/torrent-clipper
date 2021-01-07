@@ -2,54 +2,50 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <link rel="stylesheet" type="text/css" href="chrome://browser/content/extension.css">
+    <link rel="stylesheet" type="text/css" href="extension.css">
 </head>
 <body>
 
-<section id="options-section" class="panel">
+<header class="panel-section panel-section-header">
+    <div class="text-section-header" data-i18n="addTorrentTitle"></div>
+</header>
 
-    <div class="panel-section panel-section-header">
-        <span class="text-section-header" data-i18n="addTorrentTitle"></span>
+<div class="panel-section panel-section-formElements">
+    <div class="panel-formElements-item browser-style">
+        <label for="url" data-i18n="torrentUrl"></label>
+        <input type="text" id="url" class="browser-style" disabled />
     </div>
 
-    <div class="panel-section panel-section-formElements">
-        <div class="panel-formElements-item browser-style">
-            <label data-i18n="torrentUrl"></label>
-            <input type="text" id="url" disabled />
-        </div>
-
-        <div class="panel-formElements-item browser-style">
-            <label data-i18n="serverNameOption"></label>
-            <select id="server" class="browser-style">
-                <option data-i18n="defaultOption" value=""></option>
-            </select>
-        </div>
-
-        <div class="panel-formElements-item browser-style">
-            <label data-i18n="downloadLocationSelect"></label>
-            <select id="downloadLocation" class="browser-style">
-                <option data-i18n="defaultOption" value=""></option>
-            </select>
-        </div>
-
-        <div class="panel-formElements-item browser-style">
-            <label data-i18n="labelSelect"></label>
-            <select id="labels" class="browser-style">
-                <option data-i18n="noneOption" value=""></option>
-            </select>
-        </div>
-
-        <div class="panel-formElements-item browser-style">
-            <input type="checkbox" id="addpaused" />
-            <label for="addpaused" data-i18n="addAsPausedOption"></label>
-        </div>
+    <div class="panel-formElements-item browser-style">
+        <label for="server" data-i18n="serverNameOption"></label>
+        <select id="server" class="browser-style">
+            <option data-i18n="defaultOption" value=""></option>
+        </select>
     </div>
 
-</section>
+    <div class="panel-formElements-item browser-style">
+        <label for="downloadLocation" data-i18n="downloadLocationSelect"></label>
+        <select id="downloadLocation" class="browser-style">
+            <option data-i18n="defaultOption" value=""></option>
+        </select>
+    </div>
 
-<div class="panel-formElements-item">
-    <button id="add-torrent" class="browser-style default" data-i18n="addTorrentAction" style="margin: 0 16px 0 auto"></button>
+    <div class="panel-formElements-item browser-style">
+        <label for="labels" data-i18n="labelSelect"></label>
+        <select id="labels" class="browser-style">
+            <option data-i18n="noneOption" value=""></option>
+        </select>
+    </div>
+
+    <div class="panel-formElements-item browser-style">
+        <input type="checkbox" id="addpaused" class="browser-style" />
+        <label for="addpaused" data-i18n="addAsPausedOption"></label>
+    </div>
 </div>
+
+<footer class="panel-section panel-section-footer">
+    <button id="add-torrent" class="panel-section-footer-button default" data-i18n="addTorrentAction"></button>
+</footer>
 
 <script src="../util.js"></script>
 <script src="add_torrent.js"></script>

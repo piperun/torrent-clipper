@@ -205,6 +205,7 @@ document.querySelector('#application').addEventListener('change', (e) => {
             element.parentNode.removeChild(element));
 
         if (client.clientOptions) {
+            clientOptionsPanel.style.display = 'flex'
             const server = options.servers[options.globals.currentServer];
 
             client.clientOptions.forEach((option) => {
@@ -227,6 +228,8 @@ document.querySelector('#application').addEventListener('change', (e) => {
 
                 clientOptionsPanel.appendChild(container);
             });
+        } else {
+            clientOptionsPanel.style.display = 'none'
         }
     }
 });
