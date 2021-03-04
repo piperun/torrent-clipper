@@ -1,4 +1,4 @@
-export default class BaseClient {
+class BaseClient {
 
     constructor() {
         this.listeners = {};

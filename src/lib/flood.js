@@ -1,7 +1,9 @@
+/*
 import BaseClient from './baseclient.js';
 import {base64Encode} from '../base64.js';
+*/
 
-export default class FloodApi extends BaseClient {
+class FloodApi extends BaseClient {
 
     constructor(serverSettings) {
         super();

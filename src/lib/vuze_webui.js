@@ -1,6 +1,6 @@
-import BaseClient from './baseclient.js';
+//import BaseClient from './baseclient.js';
 
-export default class VuzeWebUIApi extends BaseClient {
+class VuzeWebUIApi extends BaseClient {
 
     constructor(serverSettings) {
         super();

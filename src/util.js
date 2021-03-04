@@ -1,3 +1,4 @@
+/*
 import CloudTorrentApi from './lib/cloudtorrent.js';
 import DelugeApi from './lib/deluge.js';
 import FloodApi from './lib/flood.js';
@@ -7,8 +8,8 @@ import TixatiApi from './lib/tixati.js';
 import TransmissionApi from './lib/transmission.js';
 import uTorrentApi from './lib/utorrent.js';
 import VuzeWebUIApi from './lib/vuze_webui.js';
-
-export const clientList = [
+*/
+const clientList = [
     {
         id: 'biglybt',
         name: 'BiglyBT',
@@ -102,7 +103,7 @@ export const clientList = [
     }
 ];
 
-export const getClient = (serverSettings) => {
+const getClient = (serverSettings) => {
     switch(serverSettings.application) {
         case 'biglybt':
             return new TransmissionApi(serverSettings);
@@ -141,7 +142,7 @@ export const getClient = (serverSettings) => {
     return new Error('No client found');
 }
 
-export const loadOptions = () => {
+const loadOptions = () => {
     const defaults = {
         globals: {
             currentServer: 0,
@@ -177,7 +178,7 @@ const saveOptions = (options) => {
     return chrome.storage.sync.set(options);
 }
 
-export const isMagnetUrl = (url) => {
+const isMagnetUrl = (url) => {
     return !!url.match(/^magnet:/);
 }
 
@@ -197,18 +198,18 @@ const whitelist = [
     /^https:\/\/animebytes\.tv\/torrent\/\d+\/download\/$/,
 ];
 
-export const isTorrentUrl = (url) => {
+const isTorrentUrl = (url) => {
     return whitelist.some((regexp) => !!url.match(regexp));
 }
 
-export const getMagnetUrlName = (url) => {
+const getMagnetUrlName = (url) => {
     const match = url.match(/^magnet:(.+)$/);
     const params = new URLSearchParams(match ? match[1] : '');
 
     return (params.has('dn') ? params.get('dn') : false);
 }
 
-export const getTorrentName = (data) => {
+const getTorrentName = (data) => {
     return new Promise((resolve, reject) => {
         let reader = new FileReader();
         reader.onerror = (error) => resolve(false);
@@ -242,7 +243,7 @@ const mergeObjects = (target, source) => {
     );
 }
 
-export const getURL = ({ hostname, username, password, application }) => {
+const getURL = ({ hostname, username, password, application }) => {
     const client = clientList.find((client) => client.id === application);
 
     const url = new URL(hostname);

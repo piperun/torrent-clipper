@@ -1,6 +1,6 @@
-import BaseClient from './baseclient.js';
+//import BaseClient from './baseclient.js';
 
-export default class qBittorrentApi extends BaseClient {
+class qBittorrentApi extends BaseClient {
 
     constructor(serverSettings) {
         super();

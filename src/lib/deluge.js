@@ -1,7 +1,9 @@
+/*
 import BaseClient from './baseclient.js';
 import {base64Encode} from '../base64.js';
+*/
 
-export default class DelugeApi extends BaseClient {
+class DelugeApi extends BaseClient {
 
     constructor(serverSettings) {
         super();
