@@ -1,32 +1,43 @@
-const clientList = [
+import CloudTorrentApi from './lib/cloudtorrent.js';
+import DelugeApi from './lib/deluge.js';
+import FloodApi from './lib/flood.js';
+import qBittorrentApi from './lib/qbittorrent.js';
+import ruTorrentApi from './lib/rutorrent.js';
+import TixatiApi from './lib/tixati.js';
+import TransmissionApi from './lib/transmission.js';
+import uTorrentApi from './lib/utorrent.js';
+import VuzeWebUIApi from './lib/vuze_webui.js';
+
+export const clientList = [
     {
         id: 'biglybt',
         name: 'BiglyBT',
         addressPlaceholder: 'http://127.0.0.1:9091/',
-        torrentOptions: ['paused', 'path']
+        clientCapabilities: ['paused', 'path', 'httpAuth']
     },
     {
         id: 'cloudtorrent',
         name: 'Cloud Torrent',
-        addressPlaceholder: 'http://127.0.0.1:3000/'
+        addressPlaceholder: 'http://127.0.0.1:3000/',
+        clientCapabilities: ['httpAuth']
     },
     {
         id: 'deluge',
         name: 'Deluge Web UI',
         addressPlaceholder: 'http://127.0.0.1:8112/',
-        torrentOptions: ['paused', 'label', 'path']
+        clientCapabilities: ['paused', 'label', 'path']
     },
     {
         id: 'flood',
         name: 'Flood',
         addressPlaceholder: 'http://127.0.0.1:3000/',
-        torrentOptions: ['paused', 'label', 'path']
+        clientCapabilities: ['paused', 'label', 'path']
     },
     {
         id: 'rutorrent',
         name: 'ruTorrent',
         addressPlaceholder: 'http://127.0.0.1:80/',
-        torrentOptions: ['paused', 'label', 'path', 'rss'],
+        clientCapabilities: ['paused', 'label', 'path', 'rss', 'httpAuth'],
         clientOptions: [
             {
                 name: 'fast_resume',
@@ -38,13 +49,13 @@ const clientList = [
         id: 'tixati',
         name: 'Tixati',
         addressPlaceholder: 'http://127.0.0.1:8888/',
-        torrentOptions: ['paused']
+        clientCapabilities: ['paused', 'httpAuth']
     },
     {
         id: 'transmission',
         name: 'Transmission',
         addressPlaceholder: 'http://127.0.0.1:9091/',
-        torrentOptions: ['paused', 'path']
+        clientCapabilities: ['paused', 'path', 'httpAuth']
     },
     {
         id: 'utorrent',
@@ -55,12 +66,13 @@ const clientList = [
         id: 'vuze_remoteui',
         name: 'Vuze Web Remote',
         addressPlaceholder: 'http://127.0.0.1:9091/',
-        torrentOptions: ['paused', 'path']
+        clientCapabilities: ['paused', 'path', 'httpAuth']
     },
     {
         id: 'vuze_webui',
         name: 'Vuze HTML Web UI',
-        addressPlaceholder: 'http://127.0.0.1:6886/'
+        addressPlaceholder: 'http://127.0.0.1:6886/',
+        clientCapabilities: ['httpAuth']
     },
     {
         id: 'vuze_webui_100',
@@ -71,7 +83,7 @@ const clientList = [
         id: 'qbittorrent',
         name: 'qBittorrent',
         addressPlaceholder: 'http://127.0.0.1:8080/',
-        torrentOptions: ['paused', 'label', 'path', 'rss'],
+        clientCapabilities: ['paused', 'label', 'path', 'rss'],
         clientOptions: [
             {
                 name: 'sequentialDownload',
@@ -90,7 +102,7 @@ const clientList = [
     }
 ];
 
-const getClient = (serverSettings) => {
+export const getClient = (serverSettings) => {
     switch(serverSettings.application) {
         case 'biglybt':
             return new TransmissionApi(serverSettings);
@@ -99,7 +111,7 @@ const getClient = (serverSettings) => {
         case 'deluge':
             return new DelugeApi(serverSettings);
         case 'flood':
-            return new floodApi(serverSettings);
+            return new FloodApi(serverSettings);
         case 'rutorrent':
             return new ruTorrentApi(serverSettings);
         case 'tixati':
@@ -129,7 +141,7 @@ const getClient = (serverSettings) => {
     return new Error('No client found');
 }
 
-const loadOptions = () => {
+export const loadOptions = () => {
     const defaults = {
         globals: {
             currentServer: 0,
@@ -165,7 +177,7 @@ const saveOptions = (options) => {
     return chrome.storage.sync.set(options);
 }
 
-const isMagnetUrl = (url) => {
+export const isMagnetUrl = (url) => {
     return !!url.match(/^magnet:/);
 }
 
@@ -185,23 +197,18 @@ const whitelist = [
     /^https:\/\/animebytes\.tv\/torrent\/\d+\/download\/$/,
 ];
 
-const blacklist = [
-    // Plugin url
-    /^chrome-extension:\/\//,
-]
-
-const isTorrentUrl = (url) => {
-    return whitelist.some((regexp) => !!url.match(regexp)) && !blacklist.some((regexp) => !!url.match(regexp));
+export const isTorrentUrl = (url) => {
+    return whitelist.some((regexp) => !!url.match(regexp));
 }
 
-const getMagnetUrlName = (url) => {
+export const getMagnetUrlName = (url) => {
     const match = url.match(/^magnet:(.+)$/);
     const params = new URLSearchParams(match ? match[1] : '');
 
     return (params.has('dn') ? params.get('dn') : false);
 }
 
-const getTorrentName = (data) => {
+export const getTorrentName = (data) => {
     return new Promise((resolve, reject) => {
         let reader = new FileReader();
         reader.onerror = (error) => resolve(false);
@@ -228,15 +235,6 @@ const getTorrentName = (data) => {
     });
 }
 
-const base64Encode = (data) => {
-    return new Promise((resolve, reject) => {
-        let reader = new FileReader();
-        reader.onerror = (error) => reject(error);
-        reader.onload = () => resolve(reader.result.split(',')[1]);
-        reader.readAsDataURL(data);
-    });
-}
-
 const mergeObjects = (target, source) => {
     Object.keys(source).forEach((key) =>
         target.hasOwnProperty(key) && typeof target[key] === 'object' ?
@@ -244,12 +242,15 @@ const mergeObjects = (target, source) => {
     );
 }
 
-const getURL = (serverOptions) => {
-    const { hostname, username, password } = serverOptions;
+export const getURL = ({ hostname, username, password, application }) => {
+    const client = clientList.find((client) => client.id === application);
+
     const url = new URL(hostname);
-    
-    url.username = username ? username : '';
-    url.password = password ? password : '';
+
+    if (client.clientCapabilities && client.clientCapabilities.includes('httpAuth')) {
+        url.username = username ? username : '';
+        url.password = password ? password : '';
+    }
 
     return url.toString()
 }

@@ -1,4 +1,4 @@
-class BaseClient {
+export default class BaseClient {
 
     constructor() {
         this.listeners = {};
@@ -71,18 +71,18 @@ class BaseClient {
 
         chrome.webRequest.onAuthRequired.addListener(
             this.listeners.onAuthRequired,
-            {urls: [hostname.replace(/\:\d+/, '') + '*']},
+            {urls: [hostname.replace(/:\d+/, '') + '*']},
             ['blocking']
         );
 
         chrome.webRequest.onCompleted.addListener(
             this.listeners.onAuthCompleted,
-            {urls: [hostname.replace(/\:\d+/, '') + '*']},
+            {urls: [hostname.replace(/:\d+/, '') + '*']},
         );
 
         chrome.webRequest.onErrorOccurred.addListener(
             this.listeners.onAuthCompleted,
-            {urls: [hostname.replace(/\:\d+/, '') + '*']},
+            {urls: [hostname.replace(/:\d+/, '') + '*']},
         );
     }
 
@@ -132,8 +132,8 @@ class BaseClient {
         const regex = new RegExp(key + '=(.+?);');
 
         if (cookie)
-            return cookie.value.match(regex)[0] || false;
+            return cookie.value.match(regex)[0] || null;
 
-        return false;
+        return null;
     }
 }

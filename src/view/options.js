@@ -1,3 +1,9 @@
+import {
+    clientList,
+    loadOptions,
+    saveOptions,
+} from '../util.js';
+
 var options;
 
 const serverSelect = document.querySelector('#server-list');
@@ -6,7 +12,7 @@ const saveButton = document.querySelector('#save-options');
 const isLabelsSupported = (servers) => servers.some((server) => {
     const client = clientList.find((client) => client.id === server.application);
 
-    if (client && client.torrentOptions && client.torrentOptions.includes('label')) {
+    if (client && client.clientCapabilities && client.clientCapabilities.includes('label')) {
         return true;
     }
     return false;
@@ -26,7 +32,7 @@ const persistOptions = () => {
 
     let clientOptions = {};
     Array.from(document.querySelectorAll('*[id^="clientOptions"]')).forEach((element) => {
-        clientOptions[element.id.match(/\[(.+?)\]$/)[1]] = element.checked;
+        clientOptions[element.id.match(/\[(.+?)]$/)[1]] = element.checked;
     });
 
     options.servers[~~serverSelect.value] = {
@@ -41,7 +47,7 @@ const persistOptions = () => {
 
     saveOptions(options);
 
-    saveButton.setAttribute('disabled', true);
+    saveButton.setAttribute('disabled', 'true');
 }
 
 const restoreOptions = () => {
@@ -80,7 +86,7 @@ const restoreOptions = () => {
         restoreServer(serverSelect.value);
     });
 
-    saveButton.setAttribute('disabled', true);
+    saveButton.setAttribute('disabled', 'true');
 }
 
 const restoreServerList = () => {
@@ -120,7 +126,7 @@ const restoreServer = (id) => {
     if (options.servers.length > 1)
         document.querySelector('#remove-server').removeAttribute('disabled');
     else
-        document.querySelector('#remove-server').setAttribute('disabled', true);
+        document.querySelector('#remove-server').setAttribute('disabled', 'true');
 }
 
 const addServer = () => {
@@ -190,10 +196,10 @@ document.querySelector('#application').addEventListener('change', (e) => {
             document.querySelector('#hostname').value = client.addressPlaceholder;
 
         document.querySelector('[data-panel="directories"]').style.display =
-            client.torrentOptions && client.torrentOptions.includes('path') ? 'flex' : 'none';
+            client.clientCapabilities && client.clientCapabilities.includes('path') ? 'flex' : 'none';
 
         document.querySelector('[data-panel="labels"]').style.display =
-            isLabelsSupported(options.servers) || (client.torrentOptions && client.torrentOptions.includes('label')) ? 'flex' : 'none';
+            isLabelsSupported(options.servers) || (client.clientCapabilities && client.clientCapabilities.includes('label')) ? 'flex' : 'none';
 
         if (client.id === 'deluge')
             document.querySelector('#username').setAttribute('disabled', 'true');

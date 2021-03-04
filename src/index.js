@@ -1,3 +1,15 @@
+import {
+    clientList,
+    loadOptions,
+    saveOptions,
+    getClient,
+    isTorrentUrl,
+    isMagnetUrl,
+    getTorrentName,
+    getMagnetUrlName,
+    getURL,
+} from './util.js';
+
 var options;
 var redirectUrls = {};
 
@@ -6,7 +18,7 @@ chrome.storage.onChanged.addListener((changes) => {
 
     removeContextMenu();
 
-    if (options.globals.contextMenu && options.servers[options.globals.currentServer].hostname !== '')
+    if (options.globals.contextMenu && isConfigured())
         createContextMenu();
 
     if (options.servers.length > 1)
@@ -18,7 +30,7 @@ chrome.storage.onChanged.addListener((changes) => {
 loadOptions().then((newOptions) => {
     options = newOptions;
 
-    if (options.globals.contextMenu && options.servers[options.globals.currentServer].hostname !== '')
+    if (options.globals.contextMenu && isConfigured())
         createContextMenu();
 
     if (options.servers.length > 1)
@@ -28,8 +40,10 @@ loadOptions().then((newOptions) => {
     registerHandler();
 });
 
+const isConfigured = () => options.servers[options.globals.currentServer].hostname !== '';
+
 const addTorrent = (url, referer = null, torrentOptions = {}) => {
-    
+
     torrentOptions = {
         paused: false,
         path: null,
@@ -39,7 +53,7 @@ const addTorrent = (url, referer = null, torrentOptions = {}) => {
 
     const server = torrentOptions.server !== undefined ? torrentOptions.server : options.globals.currentServer;
     const serverSettings = options.servers[server];
-    
+
     const connection = getClient(serverSettings);
     const networkErrors = [
         'NetworkError when attempting to fetch resource.',
@@ -114,6 +128,8 @@ const createBrowserRequest = (url, referer) => {
             let requestHeaders = details.requestHeaders;
 
             const currentTab = await getCurrentTab();
+
+            // @crossplatform Tab includes cookieStoreId on Firefox
             const cookies = currentTab ? await getCookies(currentTab.cookieStoreId, url) : [];
 
             requestHeaders = requestHeaders.filter((header) => {
@@ -218,8 +234,8 @@ const createContextMenu = () => {
 
     const client = clientList.find((client) => client.id === serverOptions.application);
 
-    if (options.globals.contextMenu === 1 && client.torrentOptions) {
-        if (client.torrentOptions.length > 1) {
+    if (options.globals.contextMenu === 1 && client.clientCapabilities) {
+        if (client.clientCapabilities.length > 1) {
             chrome.contextMenus.create({
               id: 'add-torrent-advanced',
               title: chrome.i18n.getMessage('addTorrentAction') + ' (' + chrome.i18n.getMessage('advancedModifier') + ')',
@@ -227,7 +243,7 @@ const createContextMenu = () => {
             });
         }
 
-        if (client.torrentOptions.includes('paused')) {
+        if (client.clientCapabilities.includes('paused')) {
             chrome.contextMenus.create({
               id: 'add-torrent-paused',
               title: chrome.i18n.getMessage('addTorrentPausedAction'),
@@ -235,7 +251,7 @@ const createContextMenu = () => {
             });
         }
 
-        if (client.torrentOptions.includes('label') && options.globals.labels.length) {
+        if (client.clientCapabilities.includes('label') && options.globals.labels.length) {
             chrome.contextMenus.create({
                 id: 'add-torrent-label',
                 title: chrome.i18n.getMessage('addTorrentLabelAction'),
@@ -252,7 +268,7 @@ const createContextMenu = () => {
             });
         }
 
-        if (client.torrentOptions.includes('path') && serverOptions.directories.length) {
+        if (client.clientCapabilities.includes('path') && serverOptions.directories.length) {
             chrome.contextMenus.create({
                 id: 'add-torrent-path',
                 title: chrome.i18n.getMessage('addTorrentPathAction'),
@@ -268,8 +284,8 @@ const createContextMenu = () => {
                 });
             });
         }
-    } else if (client.torrentOptions) {
-        if (client.torrentOptions.includes('label') && options.globals.labels.length) {
+    } else if (client.clientCapabilities) {
+        if (client.clientCapabilities.includes('label') && options.globals.labels.length) {
             chrome.contextMenus.create({
                 contexts: ['link'],
                 type: 'separator'
@@ -284,7 +300,7 @@ const createContextMenu = () => {
             });
         }
 
-        if (client.torrentOptions.includes('path') && serverOptions.directories.length) {
+        if (client.clientCapabilities.includes('path') && serverOptions.directories.length) {
             chrome.contextMenus.create({
                 contexts: ['link'],
                 type: 'separator'
@@ -300,7 +316,7 @@ const createContextMenu = () => {
         }
     }
 
-    if (client.torrentOptions && client.torrentOptions.includes('rss')) {
+    if (client.clientCapabilities && client.clientCapabilities.includes('rss')) {
         if (options.globals.contextMenu === 1) {
             chrome.contextMenus.create({
                 contexts: ['link'],
@@ -322,9 +338,9 @@ const removeContextMenu = () => {
 
 const registerHandler = () => {
     chrome.contextMenus.onClicked.addListener((info, tab) => {
-        const currentServer = info.menuItemId.match(/^current\-server\-(\d+)$/);
-        const labelId = info.menuItemId.match(/^add\-torrent\-label\-(\d+)$/);
-        const pathId = info.menuItemId.match(/^add\-torrent\-path\-(\d+)$/);
+        const currentServer = info.menuItemId.match(/^current-server-(\d+)$/);
+        const labelId = info.menuItemId.match(/^add-torrent-label-(\d+)$/);
+        const pathId = info.menuItemId.match(/^add-torrent-path-(\d+)$/);
 
         const clientOptions = options.servers[options.globals.currentServer].clientOptions || {};
 
@@ -363,7 +379,7 @@ const registerHandler = () => {
     });
 
     chrome.browserAction.onClicked.addListener(() => {
-        if (options.servers[options.globals.currentServer].hostname !== '') {
+        if (isConfigured()) {
             const url = getURL(options.servers[options.globals.currentServer])
             chrome.tabs.create({ url });
         } else {
@@ -371,7 +387,7 @@ const registerHandler = () => {
         }
     });
 
-    chrome.webRequest.onBeforeRequest.addListener((details) => {        
+    chrome.webRequest.onBeforeRequest.addListener((details) => {
             let parser = document.createElement('a');
             parser.href = details.url;
             let magnetUri = decodeURIComponent(parser.pathname).substr(1);
@@ -442,7 +458,7 @@ const addAdvancedDialog = (url, referer = null) => {
         params.append('referer', referer);
     }
 
-    const height = 340;
+    const height = 350;
     const width = 500;
     const top = Math.round((screen.height / 2) - (height / 2));
     const left = Math.round((screen.width / 2) - (width / 2));
@@ -457,7 +473,7 @@ const addAdvancedDialog = (url, referer = null) => {
     });
 }
 
-const notification = (message) => {
+export const notification = (message) => {
     if (options && !options.globals.enableNotifications) {
         return;
     }
@@ -504,7 +520,7 @@ const getCookies = async (cookieStoreId, torrentUrl) => {
     return await new Promise((resolve) => {
         chrome.cookies.getAll({
             url: torrentUrl,
-            storeId: cookieStoreId 
+            storeId: cookieStoreId
         }, (cookies) => resolve(cookies))
     });
 }

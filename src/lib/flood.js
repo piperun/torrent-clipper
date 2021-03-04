@@ -1,4 +1,7 @@
-class floodApi extends BaseClient {
+import BaseClient from './baseclient.js';
+import {base64Encode} from '../base64.js';
+
+export default class FloodApi extends BaseClient {
 
     constructor(serverSettings) {
         super();
@@ -13,13 +16,17 @@ class floodApi extends BaseClient {
         this._attachListeners();
 
         return new Promise((resolve, reject) => {
-            let form = new URLSearchParams();
-            form.set('username', username);
-            form.set('password', password);
+            let request = {
+                username: username,
+                password: password,
+            };
 
-            fetch(hostname + 'auth/authenticate', {
+            fetch(hostname + 'api/auth/authenticate', {
                 method: 'POST',
-                body: form
+                headers: new Headers({
+                    'Content-Type': 'application/json'
+                }),
+                body: JSON.stringify(request)
             })
             .then((response) => {
                 if (response.ok)
@@ -50,24 +57,30 @@ class floodApi extends BaseClient {
         const {hostname} = this.settings;
 
         return new Promise((resolve, reject) => {
-            let form = new FormData();
-            form.append('torrents', torrent, 'temp.torrent');
-            form.append('start', !options.paused);
-            form.append('destination', options.path || '');
-            form.append('isBasePath', false);
-            form.append('tags', options.label || '');
+            base64Encode(torrent).then((base64torrent) => {
+                let request = {
+                    files: [
+                        base64torrent,
+                    ],
+                    destination: options.path || '',
+                    tags: options.label ? [options.label] : [],
+                    start: !(options.paused || false)
+                };
 
-            fetch(hostname + 'api/client/add-files', {
-                method: 'POST',
-                body: form
-            })
-            .then((response) => {
-                if (response.ok)
-                    resolve();
-                else
-                    throw new Error(chrome.i18n.getMessage('apiError', response.status.toString() + ': ' + response.statusText));
-            })
-            .catch((error) => reject(error));
+                return fetch(hostname + 'api/torrents/add-files', {
+                    method: 'POST',
+                    headers: new Headers({
+                        'Content-Type': 'application/json'
+                    }),
+                    body: JSON.stringify(request)
+                })
+                .then((response) => {
+                    if (response.ok)
+                        resolve();
+                    else
+                        throw new Error(chrome.i18n.getMessage('apiError', response.status.toString() + ': ' + response.statusText));
+                });
+            }).catch((error) => reject(error));
         });
     }
 
@@ -76,16 +89,15 @@ class floodApi extends BaseClient {
 
         return new Promise((resolve, reject) => {
             let request = {
-                start: !options.paused,
-                destination: options.path,
-                isBasePath: false,
                 urls: [
                     url,
                 ],
-                tags: options.label ? [options.label] : []
+                destination: options.path || '',
+                tags: options.label ? [options.label] : [],
+                start: !(options.paused || false)
             };
 
-            fetch(hostname + 'api/client/add', {
+            fetch(hostname + 'api/torrents/add-urls', {
                 method: 'POST',
                 headers: new Headers({
                     'Content-Type': 'application/json'
