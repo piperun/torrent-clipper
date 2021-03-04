@@ -16,17 +16,25 @@ export default class FloodApi extends BaseClient {
         this._attachListeners();
 
         return new Promise((resolve, reject) => {
+            /*
             let request = {
                 username: username,
                 password: password,
             };
+            */
+           let form = new URLSearchParams();
+           form.set('username', username);
+           form.set('password', password);
+           
 
             fetch(hostname + 'api/auth/authenticate', {
                 method: 'POST',
                 headers: new Headers({
-                    'Content-Type': 'application/json'
+                    //'Content-Type': 'application/json'
+                    'Content-Type': 'application/x-www-form-urlencoded'
                 }),
-                body: JSON.stringify(request)
+                //body: JSON.stringify(request)
+                body: form
             })
             .then((response) => {
                 if (response.ok)

@@ -173,7 +173,7 @@ export const loadOptions = () => {
     });
 }
 
-const saveOptions = (options) => {
+export const saveOptions = (options) => {
     return chrome.storage.sync.set(options);
 }
 
