@@ -1,9 +1,7 @@
-/*
 import BaseClient from './baseclient.js';
 import {base64Encode} from '../base64.js';
-*/
 
-class TransmissionApi extends BaseClient {
+export default class TransmissionApi extends BaseClient {
 
     constructor(serverSettings) {
         super();

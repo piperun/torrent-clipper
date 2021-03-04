@@ -1,6 +1,6 @@
-//import BaseClient from './baseclient.js';
+import BaseClient from './baseclient.js';
 
-class ruTorrentApi extends BaseClient {
+export default class ruTorrentApi extends BaseClient {
 
     constructor(serverSettings) {
         super();

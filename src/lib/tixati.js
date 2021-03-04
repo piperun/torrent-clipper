@@ -1,6 +1,6 @@
-//import BaseClient from './baseclient.js';
+import BaseClient from './baseclient.js';
 
-class TixatiApi extends BaseClient {
+export default class TixatiApi extends BaseClient {
 
     constructor(serverSettings) {
         super();

@@ -1,4 +1,3 @@
-/*
 import {
     clientList,
     loadOptions,
@@ -10,7 +9,6 @@ import {
     getMagnetUrlName,
     getURL,
 } from './util.js';
-*/
 
 var options;
 var redirectUrls = {};
@@ -475,7 +473,7 @@ const addAdvancedDialog = (url, referer = null) => {
     });
 }
 
-const notification = (message) => {
+export const notification = (message) => {
     if (options && !options.globals.enableNotifications) {
         return;
     }
