@@ -18,7 +18,7 @@
     "fetch-mock": "^9.10.4",
     "jsdom": "^16.3.0",
     "mocha": "^8.0.0",
-    "node-fetch": "^2.6.0",
+    "node-fetch": "^2.6.7",
     "sinon-chrome": "^3.0.1",
     "web-ext": "^5.0.0"
   }
